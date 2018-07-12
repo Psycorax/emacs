@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>My Reveal Presentation</title>
+<meta name="author" content="(Thomas Reisinger)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/sky.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">My Reveal Presentation</h1><h2 class="author">Thomas Reisinger</h2><p class="date">Created: 2018-07-12 Do. 16:22</p>
+</section>
+<section id="table-of-contents">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#/slide-org7fe90a6">First Slide</a></li>
+<li><a href="#/slide-org209034a">Second Slide</a>
+<ul>
+<li><a href="#/slide-orgbe48345">First Subslide</a></li>
+<li><a href="#/slide-org6709402">Second Subslide</a></li>
+</ul>
+</li>
+<li><a href="#/slide-org2ebcff9">Third Slide</a></li>
+<li><a href="#/slide-org22b88d7">Fourth Slide</a></li>
+</ul>
+</div>
+</div>
+</section>
+<aside class="notes">
+<p>
+examples:
+toc: table of content
+num: nummeration
+</p>
+
+</aside>
+
+<section>
+<section id="slide-org7fe90a6">
+<h2 id="org7fe90a6">First Slide</h2>
+<p>
+here could stand your text
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org209034a">
+<h2 id="org209034a">Second Slide</h2>
+<div class="outline-text-2" id="text-org209034a">
+</div>
+</section>
+<section id="slide-orgbe48345">
+<h3 id="orgbe48345">First Subslide</h3>
+<p>
+test text
+</p>
+</section>
+<section id="slide-org6709402">
+<h3 id="org6709402">Second Subslide</h3>
+
+</section>
+</section>
+<section>
+<section id="slide-org2ebcff9">
+<h2 id="org2ebcff9">Third Slide</h2>
+<aside class="notes">
+<p>
+the following attribute, allowes to roll-in the items from the list
+per click
+</p>
+
+</aside>
+<ul>
+<li class="fragment roll-in">list item 1</li>
+<li class="fragment roll-in">list item 2</li>
+<li class="fragment roll-in"><p>
+list item 3
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">a</th>
+<th scope="col" class="org-right">b</th>
+<th scope="col" class="org-right">c</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-right">2</td>
+<td class="org-right">3</td>
+</tr>
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-right">5</td>
+<td class="org-right">6</td>
+</tr>
+</tbody>
+</table></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org22b88d7">
+<h2 id="org22b88d7">Fourth Slide</h2>
+<div class="org-src-container">
+
+<pre  class="src src-C"><span style="color: #7CB8BB;">void</span> <span style="color: #93E0E3;">stupid_func</span>(<span style="color: #7CB8BB;">uint8_t</span> <span style="color: #DFAF8F;">param</span>)
+{
+  <span style="color: #F0DFAF; font-weight: bold;">if</span> (param &gt; 255)
+  {
+    param = 255;
+  }
+}
+</pre>
+</div>
+</section>
+</section>
+</div>
+</div>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>

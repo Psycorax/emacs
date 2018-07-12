@@ -1,3 +1,7 @@
+#+STARTUP: overview
+#+TITLE: My Initfile
+#+AUTHOR: Thomas Reisinger
+
 * interface tweaks
 #+BEGIN_SRC emacs-lisp
   ;; hide startup screen
@@ -30,6 +34,15 @@
 #+END_SRC
 
 * org-mode
+this installes [[https://orgmode.org/elpa.html][org ELPA]] that is a more updated version of org than,
+built in org from gnu.
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :ensure t
+    :pin org)
+#+END_SRC
+** org bullets
+   fancy bullets instead of stars
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
     :ensure t
@@ -60,13 +73,7 @@
 #+BEGIN_SRC emacs-lisp
 
 #+END_SRC
-** TODO counsel
-   is aswell needed for swiper
-#+BEGIN_SRC emacs-lisp
-  (use-package counsel
-    :ensure t
-    )
-#+END_SRC
+
 * buffers
 ** builtin
 ibuffer is an enhanced builtin buffer view
@@ -117,6 +124,45 @@ switching with C-x o but then with numbers
       ))
 #+END_SRC
 * navigation(search)
+** Swiper Ivy Counsel
+*** TODO counsel
+    is aswell needed for swiper
+ #+BEGIN_SRC emacs-lisp
+   (use-package counsel
+     :ensure t
+     )
+ #+END_SRC
+*** ivy
+  #+BEGIN_SRC emacs-lisp
+    (use-package ivy
+      :ensure t
+      :diminish (ivy-mode)
+      :bind ("C-x b" . ivy-switch-buffer)
+      :config
+      (ivy-mode 1)
+      (setq ivy-use-virtual-buffers t)
+      (setq ivy-display-style 'fancy))
+  #+END_SRC
+*** swiper
+    [[https://github.com/abo-abo/swiper][swiper]] is a alternative to the built in isearch with [[https://github.com/abo-abo/swiper][swiper]], there
+    is no more C-s and C-r needed to search and search backward
+    [[https://github.com/abo-abo/swiper][swiper]] is based on ivy-mode
+ #+BEGIN_SRC emacs-lisp
+   (use-package swiper
+     :ensure t
+     :bind (("C-s" . swiper)
+            ("C-r" . swiper)
+            ("C-c C-r" . ivy-resume)
+            ("M-x" . counsel-M-x)
+            ("C-x C-f" . counsel-find-file))
+     :config
+     (progn
+       (ivy-mode 1)
+       (setq ivy-use-virtual-buffers t)
+       (setq ivy-display-style 'fancy)
+       (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+       ))
+ #+END_SRC
 ** avy
    [[https://github.com/abo-abo/avy][avy]] is used like a search, but just to visible text. It uses a
    char-based decision tree.  an alternative would be [[https://github.com/winterTTr/ace-jump-mode][ace-jump-mode]].
@@ -128,46 +174,58 @@ switching with C-x o but then with numbers
     :ensure t
     :bind ("M-s" . avy-goto-char))
 #+END_SRC
-** swiper
-   [[https://github.com/abo-abo/swiper][swiper]] is a alternative to the built in isearch with [[https://github.com/abo-abo/swiper][swiper]], there
-   is no more C-s and C-r needed to search and search backward
-   [[https://github.com/abo-abo/swiper][swiper]] is based on ivy-mode
+* themes
+** builtin
+   there are several builtin themes that come with emacs out of the
+   box, you can choose between them by typing M-x
+   customize-themes. There you get an overview an can test these
+   themes.  To get them into you standard configuration just type the
+   following line into your configuration file.
 #+BEGIN_SRC emacs-lisp
-  (use-package swiper
-    :ensure t
-    :bind (("C-s" . swiper)
-           ("C-r" . swiper)
-           ("C-c C-r" . ivy-resume)
-           ("M-x" . counsel-M-x)
-           ("C-x C-f" . counsel-find-file))
-    :config
-    (progn
-      (ivy-mode 1)
-      (setq ivy-use-virtual-buffers t)
-      (setq ivy-display-style 'fancy)
-      (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
-      ))
+  ;(load-theme 'tango-dark t)
 #+END_SRC
 
-* ivy
-#+BEGIN_SRC emacs-lisp
-  (use-package ivy
-    :ensure t
-    :diminish (ivy-mode)
-    :bind ("C-x b" . ivy-switch-buffer)
-    :config
-    (ivy-mode 1)
-    (setq ivy-use-virtual-buffers t)
-    (setq ivy-display-style 'fancy))
-#+END_SRC
-* themes
+** external themes
+   themes made by the community
+   [[https://pawelbx.github.io/emacs-theme-gallery/][theme galery 1]]
+   [[https://emacsthemes.com/][theme galery 2]]
+*** zenburn
+    [[https://github.com/bbatsov/zenburn-emacs][zenburn-theme]]
 #+BEGIN_SRC emacs-lisp
   (use-package zenburn-theme
     :ensure t
     :config (load-theme 'zenburn t))
 #+END_SRC
+*** hemisu
+    [[https://github.com/andrzejsliwa/hemisu-theme][hemisu-theme]]
 #+BEGIN_SRC emacs-lisp
   ;(use-package hemisu-theme
   ;  :ensure t
   ;  :config (load-theme 'hemisu-dark t))
 #+END_SRC
+* presentation
+** org-reveal
+   [[https://github.com/yjwen/org-reveal][org-reveal]] works with [[https://github.com/hakimel/reveal.js/][reveal.js]], that is basically an javascript
+   library for easy presentations written in html. [[https://github.com/yjwen/org-reveal][Org-reveal]] is now
+   able to export an org file to a html site that can be opend in
+   every browser. It is very easy to use and looks fancy, i recommend
+   it for every kind of presentation that has no special things in it.
+   Attention: ox-reveal needs [[https://orgmode.org/elpa.html][Org ELPA]], because Org builtin from gnu,
+   is mostly outdated.
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-reveal
+  :ensure t
+  :config
+    (require 'ox-reveal)
+    (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
+    (setq org-reveal-mathjax t)
+    )
+
+  ; for syntax highliting of the html code
+  (use-package htmlize
+      :ensure t)
+#+END_SRC
+
+** TODO beamer
+
+** TODO that one that works directly in org mode

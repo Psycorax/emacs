@@ -1,0 +1,46 @@
+#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
+#+REVEAL_THEME: sky
+#+OPTIONS: toc:one num:nil
+#+BEGIN_NOTES
+examples:
+toc: table of content
+num: nummeration
+#+END_NOTES
+#+TITLE: My Reveal Presentation
+#+AUTHOR: Thomas Reisinger
+
+* First Slide
+  here could stand your text
+
+* Second Slide
+** First Subslide
+   test text
+** Second Subslide
+
+* Third Slide
+#+BEGIN_NOTES
+the following attribute, allowes to roll-in the items from the list
+per click
+#+END_NOTES
+  #+ATTR_REVEAL: :frag (roll-in)
+  - list item 1
+  - list item 2
+  - list item 3
+
+    | a | b | c |
+    |---+---+---|
+    | 1 | 2 | 3 |
+    | 4 | 5 | 6 |
+    |---+---+---|
+
+* Fourth Slide
+
+#+BEGIN_SRC C
+  void stupid_func(uint8_t param)
+  {
+    if (param > 255)
+    {
+      param = 255;
+    }
+  }
+#+END_SRC
