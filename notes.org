@@ -14,14 +14,14 @@
     M-x kill-rectangle
     M-x yank-rectangle
     M-x string-rectangle
-   
+
 * macro
   start macro: C-x ( or <F3> (again pressing F3 inserts a number that counts up)
   end and save macro:   C-x ) or <F4>
 
   M-x name-last-kbd-macro
   M-x insert-kbd-macro
-  
+
   You can save this now to any file that is loaded while starting
   emacs, that this macro is always available.
   It is executed by M-x <name> (here test).
@@ -32,3 +32,14 @@
 #+END_SRC
 
 
+* artist-mode
+  Artist-mode is fun, you can use it for quick diagramms, or drawing
+  something in an editor. Watch out, if you use it in org mode and
+  have some headlines not expanded it can overwrite it. To access the
+  menu, just klick the middle mouse button, the rigth mousebutton is
+  erasing by default.
+
+  example: frame done with artist mode within seconds
+  +---+---+---+---+---+-----------------+----------------------+-----+
+  | 1 | 1 | 1 | 1 | 1 |    length       |       payload        | crc |
+  +---+---+---+---+---+-----------------+----------------------+-----+
