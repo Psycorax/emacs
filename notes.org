@@ -1,0 +1,34 @@
+#+STARTUP: overview
+#+TITLE: Notes and TODOs
+#+AUTHOR: Thomas Reisinger
+
+* org-mode
+** Dates and Scheduling
+   you can look up in menue under Org -> Dates and Scheudling -> for
+   the shortcuts
+
+** org-magic
+*** make out of a list a table
+    M-x org-table-convert-region
+*** rectangle-mode
+    M-x kill-rectangle
+    M-x yank-rectangle
+    M-x string-rectangle
+   
+* macro
+  start macro: C-x ( or <F3> (again pressing F3 inserts a number that counts up)
+  end and save macro:   C-x ) or <F4>
+
+  M-x name-last-kbd-macro
+  M-x insert-kbd-macro
+  
+  You can save this now to any file that is loaded while starting
+  emacs, that this macro is always available.
+  It is executed by M-x <name> (here test).
+  Repeated executed you can press C-u <num> M-x <name>
+#+BEGIN_SRC emacs-lisp
+(fset 'test
+   "huhuh")
+#+END_SRC
+
+

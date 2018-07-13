@@ -10,17 +10,18 @@
   ;; hide toolbar
   (tool-bar-mode -1)
 
-  ;; change yes and no answers to y and n
+  ;; change to shorter answers
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
 * keybindings
+  Here you can use personalized keybindings.
 #+BEGIN_SRC emacs-lisp
-  ;; personalized keybindings
   (global-set-key (kbd "<f5>") 'revert-buffer)
 #+END_SRC
 
 * try
+  This package allowes you to try a package before installing it.
 #+BEGIN_SRC emacs-lisp
   (use-package try
                :ensure t)
@@ -34,8 +35,8 @@
 #+END_SRC
 
 * org-mode
-this installes [[https://orgmode.org/elpa.html][org ELPA]] that is a more updated version of org than,
-built in org from gnu.
+  this installes [[https://orgmode.org/elpa.html][org ELPA]] that is a more updated version of org than,
+  built in org from gnu.
 #+BEGIN_SRC emacs-lisp
   (use-package org
     :ensure t
@@ -51,14 +52,14 @@ built in org from gnu.
 #+END_SRC
 * autocomplete
 ** builtin
- built in autocomplete with [[https://www.masteringemacs.org/article/introduction-to-ido-mode][ido mode]]
- comment out ido when swiper is in use
+   built in autocomplete with [[https://www.masteringemacs.org/article/introduction-to-ido-mode][ido mode]]
+   comment out ido when swiper is in use
 #+BEGIN_SRC emacs-lisp
   ;(setq ido-enable-flex-matching t)
-  :(setq ido-everywhere t)
+  ;(setq ido-everywhere t)
   ;(ido-mode 1)
 #+END_SRC
- aswell M-/ could be used, it looks for all previous words dynamically
+aswell M-/ could be used, it looks for all previous words dynamically
 ** TODO auto-complete
 #+BEGIN_SRC emacs-lisp
   (use-package auto-complete
@@ -229,3 +230,30 @@ switching with C-x o but then with numbers
 ** TODO beamer
 
 ** TODO that one that works directly in org mode
+
+* python
+  If python packages are needed use t for true otherwise nil.  For
+  python we use [[http://www.flycheck.org/en/latest/][flycheck]] for a live syntax checker.  For better
+  completion for python we use [[https://github.com/davidhalter/jedi][Jedi]].
+#+BEGIN_SRC emacs-lisp
+    (if nil
+	(progn
+	  (use-package flycheck
+	    :ensure t
+	    :init
+	    (global-flycheck-mode t))
+
+	  (use-package jedi
+	    :ensure t
+	    :init
+	    (add-hook 'python-mode-hook 'jedi:setup)
+	    (add-hook 'python-mode-hook 'jedi:ac-setup))
+	  (use-package elpy
+	    :ensure t
+	    :config 
+	    (elpy-enable))
+	  (use-package yasnippet
+	    :ensure t
+	    :init
+	    (yas-global-mode 1))))
+#+END_SRC
