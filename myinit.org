@@ -14,6 +14,10 @@
   (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(global-hl-line-mode t)
+#+END_SRC
+
 * keybindings
   Here you can use personalized keybindings.
 #+BEGIN_SRC emacs-lisp
