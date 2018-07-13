@@ -3,6 +3,13 @@
 #+AUTHOR: Thomas Reisinger
 
 * org-mode
+** Header Properies
+*** #+STARTUP:
+    valid properties are:
+    - overview.........this is by deafault
+    - content..........shows all headings and subheadings
+    - showall..........colapses all
+    - showeverything...shows even hidden content
 ** Dates and Scheduling
    you can look up in menue under Org -> Dates and Scheudling -> for
    the shortcuts
