@@ -63,6 +63,7 @@ highlights the line with the cursor
        :config 
        (global-set-key (kbd "C-+") 'er/expand-region))
    #+END_SRC
+** TODO Smart Region
 * keybindings
   Here you can use personalized keybindings.
   #+BEGIN_SRC emacs-lisp
