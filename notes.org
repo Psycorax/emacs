@@ -37,8 +37,6 @@
 (fset 'test
    "huhuh")
 #+END_SRC
-
-
 * artist-mode
   Artist-mode is fun, you can use it for quick diagramms, or drawing
   something in an editor. Watch out, if you use it in org mode and
@@ -50,3 +48,7 @@
   +---+---+---+---+---+-----------------+----------------------+-----+
   | 1 | 1 | 1 | 1 | 1 |    length       |       payload        | crc |
   +---+---+---+---+---+-----------------+----------------------+-----+
+* yanking
+  default: kill ring first yank with C-y then cycle through it with
+  M-y. In the counsel package there is an enhanced kill ring that
+  vizualizes that.
