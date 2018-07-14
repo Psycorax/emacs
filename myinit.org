@@ -32,6 +32,13 @@ highlights the line with the cursor
 #+END_SRC
 
 * misc features
+** variables and globals
+*** auto revert
+    Auto reloads the file if it gets changed
+    #+BEGIN_SRC emacs-lisp
+      (global-auto-revert-mode 1)
+      (setq auto-revert-verbose nil)
+    #+END_SRC
 ** try
    This package allowes you to [[https://github.com/larstvei/Try][try]] a package before installing it.
    #+BEGIN_SRC emacs-lisp
@@ -219,7 +226,10 @@ highlights the line with the cursor
     #+BEGIN_SRC emacs-lisp
       (use-package counsel
 	:ensure t
-	)
+	:bind
+	(("M-y" . counsel-yank-pop)
+	 :map ivy-minibuffer-map
+	 ("M-y" . ivy-next-line)))
     #+END_SRC
 *** ivy
     TODO does what???
@@ -328,8 +338,9 @@ highlights the line with the cursor
     (global-undo-tree-mode))
   #+END_SRC
 * python
-  If python packages are needed use t for true otherwise nil.  For
-  python we use [[http://www.flycheck.org/en/latest/][flycheck]] for a live syntax checker.  For better
+  If python packages are needed use t for true otherwise nil.
+
+  For python we use [[http://www.flycheck.org/en/latest/][flycheck]] for a live syntax checker.  For better
   completion for python we use [[https://github.com/davidhalter/jedi][Jedi]].  [[https://github.com/jorgenschaefer/elpy][Elpy]] combines a syntax checker,
   a project manager, a completion. Choose wich one you like. [[https://github.com/joaotavora/yasnippet][Yasnippet]]
   is a package for making templates, that can be saved in the snippets
@@ -357,4 +368,26 @@ highlights the line with the cursor
 	    :ensure t
 	    :init
 	    (yas-global-mode 1))))
+  #+END_SRC
+* web-mode
+  If web development packages are needed use t for true otherwise nil.
+
+  [[http://web-mode.org/][Web-mode]] is a enhanced mode for web development, because html-mode
+  is not working with included css or java stuff. [[http://web-mode.org/][Web-mode]] is fixing
+  these issues.
+  #+BEGIN_SRC emacs-lisp
+    (if nil
+	(progn
+	  (use-package web-mode
+	    :ensure t
+	    :config
+	    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+	    (setq web-mode-engines-alist
+		  '(("django"    . "\\.html\\'")))
+	    (setq web-mode-ac-sources-alist
+		  '(("css" . (ac-source-css-property))
+		    ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+
+	    (setq web-mode-enable-auto-closing t)
+	    (setq web-mode-enable-auto-quoting t))))
   #+END_SRC
