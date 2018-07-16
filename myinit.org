@@ -130,13 +130,14 @@ highlights the line with the cursor
   #+END_SRC
 
 * org-mode
-  this installes [[https://orgmode.org/elpa.html][org ELPA]] that is a more updated version of org than,
-  built in org from gnu.
-  #+BEGIN_SRC emacs-lisp
-    (use-package org
-      :ensure t
-      :pin org)
-  #+END_SRC
+** org-elpa
+   This installes [[https://orgmode.org/elpa.html][org ELPA]] that is a more updated version of org than,
+   built in org from gnu.
+   #+BEGIN_SRC emacs-lisp
+     (use-package org
+       :ensure t
+       :pin org)
+   #+END_SRC
 ** org bullets
    fancy bullets instead of stars
    #+BEGIN_SRC emacs-lisp
@@ -144,6 +145,36 @@ highlights the line with the cursor
        :ensure t
        :config
        (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+   #+END_SRC
+** TODO some org configurations
+   23 2:15
+   
+   Org-capture for saving quick notes and adding them to a file.
+   #+BEGIN_SRC emacs-lisp
+     (global-set-key (kbd "C-c c") 'org-capture)
+   #+END_SRC
+   Some predefined templates for org-capture.
+   #+BEGIN_SRC emacs-lisp
+     (setq org-capture-templates
+	   '(("a" "Appointment" entry (file  "C:/Users/Psycorax_PC/Dropbox/emacs/orgfiles/gcal.org" "Appointments")
+	      "* TODO %?\n:PROPERTIES:\n\n:END:\nDEADLINE: %^T \n %i\n")
+	     ("n" "Note" entry (file+headline "C:/Users/Psycorax_PC/Dropbox/emac/orgfiles/notes.org" "Notes")
+	      "* Note %?\n%T")
+	     ("l" "Link" entry (file+headline "C:/Users/Psycorax_PC/Dropbox/emacs/orgfiles/links.org" "Links")
+	      "* %? %^L %^g \n%T" :prepend t)
+	     ("t" "To Do Item" entry (file+headline "C:/Users/Psycorax_PC/Dropbox/emacs/orgfiles/i.org" "To Do Items")
+	      "* %?\n%T" :prepend t)))
+   #+END_SRC
+
+** org-ac
+   [[https://github.com/aki2o/org-ac][Org-ac]] means org autocomplete it is a autocomplete for org. Don't
+   use it together with company mode!!!
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-ac
+       :ensure t
+       :init
+       (require 'org-ac)
+       (org-ac/config-default))
    #+END_SRC
 * autocomplete
 ** builtin
