@@ -422,3 +422,23 @@ highlights the line with the cursor
 	    (setq web-mode-enable-auto-closing t)
 	    (setq web-mode-enable-auto-quoting t))))
   #+END_SRC
+* C++
+  If python packages are needed use t for true otherwise nil.
+
+  For python we use [[http://www.flycheck.org/en/latest/][flycheck]] for a live syntax checker.  For better
+  completion for python we use [[https://github.com/davidhalter/jedi][Jedi]].  [[https://github.com/jorgenschaefer/elpy][Elpy]] combines a syntax checker,
+  a project manager, a completion. Choose wich one you like. [[https://github.com/joaotavora/yasnippet][Yasnippet]]
+  is a package for making templates, that can be saved in the snippets
+  folder.
+  #+BEGIN_SRC emacs-lisp
+    (if nil
+	(progn
+	  (use-package flycheck
+	    :ensure t
+	    :init
+	    (global-flycheck-mode t))
+	  ))
+  #+END_SRC
+  
+* TODO STUFF
+** TODO smartparens
