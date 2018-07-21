@@ -52,3 +52,5 @@
   default: kill ring first yank with C-y then cycle through it with
   M-y. In the counsel package there is an enhanced kill ring that
   vizualizes that.
+* Find In Files
+  [[http://ergoemacs.org/emacs/emacs_grep_find.html][grep]]

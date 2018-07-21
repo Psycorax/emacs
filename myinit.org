@@ -455,22 +455,28 @@ highlights the line with the cursor
 
 	  (use-package rtags
 	    :ensure t)
-      
-	  ;; (use-package company-irony
-	  ;; 	:ensure t
-	  ;; 	:config 
-	  ;; 	(add-to-list 'company-backends 'company-irony))
 
-	  ;; (use-package irony
-	  ;; 	:ensure t
-	  ;; 	:config
-	  ;; 	(add-hook 'c++-mode-hook 'irony-mode)
-	  ;; 	(add-hook 'c-mode-hook 'irony-mode)
-	  ;; 	(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+	  ;; (use-package auto-complete-clang
+	  ;; 	:ensure t)
 
-	  ;; (with-eval-after-load 'company
-	  ;; 	(add-hook 'C++-mode-hook 'company-mode)
-	  ;; 	(add-hook 'C-mode-hook 'company-mode))
+	  ;; (use-package company-clang
+	  ;; 	:ensure t)
+
+	  (use-package company-irony
+	    :ensure t
+	    :config 
+	    (add-to-list 'company-backends 'company-irony))
+
+	  (use-package irony
+	    :ensure t
+	    :config
+	    (add-hook 'c++-mode-hook 'irony-mode)
+	    (add-hook 'c-mode-hook 'irony-mode)
+	    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+
+	  (with-eval-after-load 'company
+	    (add-hook 'C++-mode-hook 'company-mode)
+	    (add-hook 'C-mode-hook 'company-mode))
 
 	  (use-package yasnippet
 	    :ensure t
@@ -481,6 +487,11 @@ highlights the line with the cursor
 
 	  (add-hook 'c-mode-hook 'yas-minor-mode)
 	  (add-hook 'c++-mode-hook 'yas-minor-mode)
+
+	  (use-package cmake-ide
+	    :ensure t)
+
+	  (add-to-list 'company-backends 'company-c-headers)
 
 	  ))
   #+End_SRC
