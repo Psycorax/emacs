@@ -14,10 +14,19 @@
     (fset 'yes-or-no-p 'y-or-n-p)
   #+END_SRC
 
-highlights the line with the cursor
-#+BEGIN_SRC emacs-lisp
-(global-hl-line-mode t)
-#+END_SRC
+  highlights the line with the cursor
+  #+BEGIN_SRC emacs-lisp
+    (global-hl-line-mode t)
+  #+END_SRC
+
+  line numbers in buffer
+  #+BEGIN_SRC emacs-lisp
+    ;; For Emacs > 26
+    ;;(display-line-numbers-mode t)
+
+    ;; For older Emacs
+    (global-linum-mode t)
+  #+END_SRC
 
 ** beacon
    flashes the cursor when scrolling
@@ -122,7 +131,7 @@ highlights the line with the cursor
      (use-package iedit
        :ensure t)
    #+END_SRC
-** multiple cursors
+** TODO multiple cursors
 * keybindings
   Here you can use personalized keybindings.
   #+BEGIN_SRC emacs-lisp
