@@ -452,8 +452,10 @@ highlights the line with the cursor
 	    :init
 	    (global-flycheck-mode t))
 
-	  
 
+	  (use-package rtags
+	    :ensure t)
+      
 	  ;; (use-package company-irony
 	  ;; 	:ensure t
 	  ;; 	:config 
