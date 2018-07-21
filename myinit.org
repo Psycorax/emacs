@@ -534,5 +534,5 @@ highlights the line with the cursor
   
 * TODO STUFF
 ** TODO smartparens
-   WIll do them soon
+   Will do them soon
 
