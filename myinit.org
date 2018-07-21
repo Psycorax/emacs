@@ -491,7 +491,12 @@ highlights the line with the cursor
 	  (use-package cmake-ide
 	    :ensure t)
 
-	  (add-to-list 'company-backends 'company-c-headers)
+	  (use-package company-irony-c-headers
+	    :ensure t)
+
+	  (eval-after-load 'company
+	    '(add-to-list
+	      'company-backends '(company-irony-c-headers company-irony)))
 
 	  ))
   #+End_SRC
