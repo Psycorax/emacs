@@ -42,7 +42,7 @@
   something in an editor. Watch out, if you use it in org mode and
   have some headlines not expanded it can overwrite it. To access the
   menu, just klick the middle mouse button, the rigth mousebutton is
-  erasing by default.
+  erasing by default
 
   example: frame done with artist mode within seconds
   +---+---+---+---+---+-----------------+----------------------+-----+
@@ -54,3 +54,7 @@
   vizualizes that.
 * Find In Files
   [[http://ergoemacs.org/emacs/emacs_grep_find.html][grep]]
+* C++ IDE
+  [[http://martinsosic.com/development/emacs/2017/12/09/emacs-cpp-ide.html][good link irony or rtags]]
+  [[https://nilsdeppe.com/posts/emacs-c++-ide][old C++]]
+  [[https://nilsdeppe.com/posts/emacs-c++-ide2][new without rtags and irony]]
