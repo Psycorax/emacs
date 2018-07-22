@@ -538,9 +538,21 @@
 	    '(add-to-list
 	      'company-backends '(company-irony-c-headers company-irony)))
 
+	  ;; (use-package cpputils-cmake
+	  ;; 	:ensure t)
+	  ;; (add-hook 'c-mode-common-hook
+	  ;; 		(lambda ()
+	  ;; 		  (if (derived-mode-p 'c-mode 'c++-mode)
+	  ;; 		      (cppcm-reload-all)
+	  ;; 		    )))
 	  ))
   #+End_SRC
   
+* LaTeX
+  packages for latex auf linux: sudo apt-get install
+  texlive-latex-recommended texlive-latex-extra
+  texlive-fonts-recommended texlive-base texlive-latex-base
+
 * TODO STUFF
 ** TODO smartparens
    Will do them soon
