@@ -184,11 +184,14 @@
        (require 'org-ac)
        (org-ac/config-default))
    #+END_SRC
+** TODO org evaluate code blocks
+   #+BEGIN_SRC emacs-lisp
+   #+END_SRC
 * autocomplete
 ** TODO auto-complete
    [[https://github.com/auto-complete/auto-complete][Auto-complete]] does... TODO.
    #+BEGIN_SRC emacs-lisp
-     (unless nil
+     (unless t
        (progn 
 	 (use-package auto-complete
 	   :ensure t
@@ -202,7 +205,7 @@
 ** TODO company
    [[https://github.com/company-mode/company-mode][Company]] 
    #+BEGIN_SRC emacs-lisp
-     (unless t
+     (unless nil
        (progn
 	 (use-package company
 	   :ensure t
@@ -457,7 +460,21 @@
 	  (yas-reload-all))
 
 	(add-hook 'python-mode-hook 'yas-minor-mode)
-    
+
+	(defun build-ctags ()
+	  (interactive)
+	  (message "building project tags")
+	  (let ((root "/"))
+	    (shell-command (concat "ctags -e -R --extra=+fq --exclude=db --exclude=test --exclude=.git --exclude=public -f " root "TAGS " root)))
+	  (visit-project-tags)
+	  (message "tags built successfully"))
+
+	(defun build-python ()
+	  (interactive)
+	  (message "building python project")
+	  (let ((root "/"))
+	    (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build main.tex")))
+	  (message "python project built successfully"))
 	))
   #+END_SRC
 * web-mode
@@ -558,6 +575,24 @@
   packages for latex auf linux: sudo apt-get install
   texlive-latex-recommended texlive-latex-extra
   texlive-fonts-recommended texlive-base texlive-latex-base
+  #+BEGIN_SRC emacs-lisp
+    (defun build-latex ()
+      (interactive)
+      (message "building pdf")
+      (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build " buffer-file-name))
+      (message "pdf built successfully")
+      )
+    (defun mkdir-latex ()
+      (interactive)
+      (message "making default latex project directory")
+      (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
+      (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0 3))
+      (if (equal myFileEnding "tex")
+	  (progn
+	    (shell-command (concat "mkdir -p " myFileName "/{images,build}"))
+	    (shell-command (concat "mv " myFileName "." myFileEnding " ./" myFileName "/" myFileName "." myFileEnding))
+	    )))
+  #+END_SRC
 
 * TODO STUFF
 ** TODO smartparens
