@@ -158,12 +158,13 @@ sudo apt-get install texlive-latex-extra texlive-fonts-recommended
 sudo apt-get install texlive-lang-german
 sudo apt-get install texlive-science 
 sudo apt-get install texlive-bibtex-extra
+sudo apt-get install texlive-latex-extra
 
 # example how to find, which package contains a requiered file
 # algorithm.sty is the example file
 # apt-file needs to be installed, and to use it you need to update
 #sudo apt install apt-file
-#sudo apt update
+#sudo apt-file update
 # BSP: apt-file find algorithm.sty
 
 # don't forget to create the directories else it will fail
