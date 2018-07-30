@@ -434,7 +434,7 @@
   is a package for making templates, that can be saved in the snippets
   folder.
   #+BEGIN_SRC emacs-lisp
-    (unless nil
+    (unless t
       (progn
 	(use-package flycheck
 	  :ensure t
@@ -508,7 +508,7 @@
   is a package for making templates, that can be saved in the snippets
   folder.
   #+BEGIN_SRC emacs-lisp
-    (unless t
+    (unless nil
 	(progn
 	  (use-package flycheck
 	    :ensure t
@@ -516,8 +516,8 @@
 	    (global-flycheck-mode t))
 
 
-	  (use-package rtags
-	    :ensure t)
+	  ;; (use-package rtags
+	  ;;   :ensure t)
 
 	  ;; (use-package auto-complete-clang
 	  ;; 	:ensure t)
@@ -550,6 +550,7 @@
 
 	  (add-hook 'c-mode-hook 'yas-minor-mode)
 	  (add-hook 'c++-mode-hook 'yas-minor-mode)
+	  (add-hook 'cmake-mode-hook 'yas-minor-mode)
 
 	  (use-package cmake-ide
 	    :ensure t)
@@ -570,6 +571,48 @@
 	  ;; 		    )))
 	  ))
   #+End_SRC
+
+  #+BEGIN_SRC emacs-lisp
+    (defun build-C-Cpp ()
+      (interactive)
+      (message "executing cmake and make(need to be in the src directory!)")
+      ;; check if directories exist
+      (unless (file-directory-p "../release")
+	(progn (mkdir "../release")))
+      (unless (file-directory-p "../debug")
+	(progn (mkdir "../debug")))
+      (unless (file-directory-p "../bin")
+	(progn (mkdir "../bin")))
+      (cd "../release")
+      (shell-command "cmake -DCMAKE_BUILD_TYPE=Release ..")
+      (shell-command "make")
+      (cd "../debug")
+      (shell-command "cmake -DCMAKE_BUILD_TYPE=Debug ..")
+      (shell-command "make")
+      (cd "../src")
+      )
+    (defun mkdir-C-CPP ()
+      (interactive)
+      (message "making default C-Cpp project directory")
+      (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
+      (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0))
+      (if (equal myFileEnding "txt")
+	  (progn
+	    (message "Insert Directoryname: ")
+	    (setq myDirName (read-from-minibuffer "Projecdirectoryname: "))
+	    (shell-command (concat "mkdir -p " myDirName "/{src,inc,doc,tests}"))
+	    (shell-command (concat "mv " myFileName "." myFileEnding " ./" myDirName "/" myFileName "." myFileEnding))
+	    (kill-buffer (concat myFileName "." myFileEnding))
+	    (cd (concat myDirName"/src"))
+	    (find-file "main.cpp")
+	    )))
+    (defun debug-C-CPP ()
+      (interactive)
+      (message "debug C-Cpp Project")
+      (gdb "gdb -i=mi ../bin/dbg")
+      (gdb-many-windows))
+
+  #+END_SRC
   
 * LaTeX
   packages for latex auf linux: sudo apt-get install
