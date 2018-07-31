@@ -136,6 +136,14 @@
   Here you can use personalized keybindings.
   #+BEGIN_SRC emacs-lisp
     (global-set-key (kbd "<f5>") 'revert-buffer)
+    (global-set-key (kbd "\e\ei")
+		    (lambda () (interactive) (find-file "~/Documents/git/emacs/myinit.org")))
+    (global-set-key (kbd "\e\ec")
+			(lambda () (interactive) (find-file "~/Tests/CMakeLists.txt")))
+    (global-set-key (kbd "\e\eb")
+		    (lambda () (interactive) (find-file "~/Documents/git/bac/main.tex")))
+    (global-set-key (kbd "\e\ep")
+		    (lambda () (interactive) (find-file "~/Documents/git/pb/PrBericht__HSD_v1.tex")))
   #+END_SRC
 * org-mode
 ** org-elpa
@@ -609,9 +617,10 @@
     (defun debug-C-CPP ()
       (interactive)
       (message "debug C-Cpp Project")
+      (gdb-enable-debug)
+      (gdb-many-windows)
       (gdb "gdb -i=mi ../bin/dbg")
-      (gdb-many-windows))
-
+      )
   #+END_SRC
   
 * LaTeX
