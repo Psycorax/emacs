@@ -30,13 +30,12 @@
 
 ** beacon
    flashes the cursor when scrolling
-   
 #+BEGIN_SRC emacs-lisp
   (use-package beacon
     :ensure t
+    :custom (beacon-color "#110055" "blue")
     :config
     (beacon-mode 1)
-    (setq beacon-color "#666600")
     )
 #+END_SRC
 
@@ -122,16 +121,27 @@
 		 (define-key LaTeX-mode-map "\C-xn"
 		   nil)))
    #+END_SRC
-** iedit
+** TODO iedit
    [[https://github.com/victorhge/iedit][Iedit]] is for enhaced editing, like replacing. Very powerfull
    because it has nomething like an built in narrowing, widening and
-   expand region for marked word. TODO: Check 18 comments for more choices
-   of multiple editing.
+   expand region for marked word. TODO: Check 18 comments for more
+   choices of multiple editing. Default keybinding is C-; but this is
+   overwritten by Flyspell.
    #+BEGIN_SRC emacs-lisp
      (use-package iedit
        :ensure t)
    #+END_SRC
 ** TODO multiple cursors
+   #+BEGIN_SRC emacs-lisp
+     (use-package multiple-cursors
+       :ensure t
+       :config
+       (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+       (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+       (global-set-key (kbd "C-M-<") 'mc/mark-all-like-this)
+       (define-key mc/keymap (kbd "<return>") nil))
+   #+END_SRC
+
 * keybindings
   Here you can use personalized keybindings.
   #+BEGIN_SRC emacs-lisp
@@ -150,17 +160,23 @@
    This installes [[https://orgmode.org/elpa.html][org ELPA]] that is a more updated version of org than,
    built in org from gnu.
    #+BEGIN_SRC emacs-lisp
-     (use-package org
-       :ensure t
-       :pin org)
+     
    #+END_SRC
 ** org bullets
-   fancy bullets instead of stars
+   Fancy bullets instead of stars. Some symbols that can be used as
+   bullets:
+   default: "◉ ○ ✸ ✿"
+   large: ♥ ● ◇ ✚ ✜ ☯ ◆ ♠ ♣ ♦ ☢ ❀ ◆ ◖ ▶
+   small: ► • ★ ▸
+   for ellipsis: ▼ ⤵ ↴ ⬎ ⤷ … ⋱
    #+BEGIN_SRC emacs-lisp
      (use-package org-bullets
        :ensure t
-       :config
-       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+       :custom
+       (org-bullets-bullet-list '("-"))
+       (org-ellipsis "...")
+       :hook
+       (org-mode . org-bullets-mode))
    #+END_SRC
 ** TODO some org configurations
    23 2:15
@@ -194,7 +210,11 @@
    #+END_SRC
 ** TODO org evaluate code blocks
    #+BEGIN_SRC emacs-lisp
+     (org-babel-do-load-languages
+      'org-babel-load-languages
+      '((python . t)))
    #+END_SRC
+
 * autocomplete
 ** TODO auto-complete
    [[https://github.com/auto-complete/auto-complete][Auto-complete]] does... TODO.
@@ -239,7 +259,29 @@
    #+END_SRC
 ** TODO tabbar-ruler
    fancier tabbar [[https://github.com/mattfidler/tabbar-ruler.el][tabbar ruler]]
+   needs some packages to be installed:
+   tabbar
+   power-line
+   mode-icons
    #+BEGIN_SRC emacs-lisp
+     (use-package powerline
+       :ensure t
+       :config
+       (powerline-default-theme))
+
+     (use-package mode-icons
+       :ensure t
+       :config
+       (mode-icons-mode))
+
+     (use-package tabbar-ruler
+       :ensure t
+       :init
+       (setq tabbar-ruler-global-tabbar t)    ; get tabbar
+       (setq tabbar-ruler-global-ruler t)     ; get global ruler
+       (setq tabbar-ruler-popup-menu t)       ; get popup menu.
+       (setq tabbar-ruler-popup-toolbar t)    ; get popup toolbar
+       (setq tabbar-ruler-popup-scrollbar t))  ; show scroll-bar on mouse-move
 
    #+END_SRC
 * windows
@@ -271,6 +313,11 @@
 	    ((t (:inherit ace-jump-face-foreground :height 4.0))))) 
 	 ))
    #+END_SRC
+* Flyspell
+  #+BEGIN_SRC emacs-lisp
+    (add-hook 'latex-mode-hook 'flyspell-mode)
+    (setq ispell-dictionary "deutsch8")
+  #+END_SRC
 * navigation(search)
 ** builtin
    built in completion with [[https://www.masteringemacs.org/article/introduction-to-ido-mode][ido mode]] comment out ido when ivy is in
@@ -524,8 +571,8 @@
 	    (global-flycheck-mode t))
 
 
-	  ;; (use-package rtags
-	  ;;   :ensure t)
+	   ;; (use-package rtags
+	   ;;  :ensure t)
 
 	  ;; (use-package auto-complete-clang
 	  ;; 	:ensure t)
@@ -560,15 +607,24 @@
 	  (add-hook 'c++-mode-hook 'yas-minor-mode)
 	  (add-hook 'cmake-mode-hook 'yas-minor-mode)
 
-	  (use-package cmake-ide
-	    :ensure t)
-
 	  (use-package company-irony-c-headers
 	    :ensure t)
 
 	  (eval-after-load 'company
 	    '(add-to-list
 	      'company-backends '(company-irony-c-headers company-irony)))
+
+	  (load-file "~/Documents/git/rtags/src/rtags.el")
+	  (setq rtags-path "~/Documents/git/rtags/bin")
+
+	  (use-package cmake-ide
+	    :ensure t)
+
+	  (setq cmake-ide-rdm-executable "~/Documents/git/rtags/bin/rdm")
+	  (setq cmake-ide-rc-executable "~/Documents/git/rtags/bin/rc")
+	  (setq cmake-ide-build-dir "../build")
+      
+	  (cmake-ide-setup)
 
 	  ;; (use-package cpputils-cmake
 	  ;; 	:ensure t)
