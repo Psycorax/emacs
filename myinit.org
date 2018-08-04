@@ -22,10 +22,12 @@
   line numbers in buffer
   #+BEGIN_SRC emacs-lisp
     ;; For Emacs > 26
-    ;;(display-line-numbers-mode t)
+    (if (>= emacs-major-version 26)
+	(progn (global-display-line-numbers-mode t))
+      (progn (global-linum-mode t)))
 
     ;; For older Emacs
-    (global-linum-mode t)
+    ;(global-linum-mode nil)
   #+END_SRC
 
 ** beacon
@@ -128,8 +130,8 @@
    choices of multiple editing. Default keybinding is C-; but this is
    overwritten by Flyspell.
    #+BEGIN_SRC emacs-lisp
-     (use-package iedit
-       :ensure t)
+     ;(use-package iedit
+     ;  :ensure t)
    #+END_SRC
 ** TODO multiple cursors
    #+BEGIN_SRC emacs-lisp
@@ -164,20 +166,20 @@
    #+END_SRC
 ** org bullets
    Fancy bullets instead of stars. Some symbols that can be used as
-   bullets:
-   default: "◉ ○ ✸ ✿"
-   large: ♥ ● ◇ ✚ ✜ ☯ ◆ ♠ ♣ ♦ ☢ ❀ ◆ ◖ ▶
-   small: ► • ★ ▸
-   for ellipsis: ▼ ⤵ ↴ ⬎ ⤷ … ⋱
    #+BEGIN_SRC emacs-lisp
      (use-package org-bullets
        :ensure t
        :custom
-       (org-bullets-bullet-list '("-"))
-       (org-ellipsis "...")
+       (org-bullets-bullet-list '("•"))
+       (org-ellipsis "…")
        :hook
        (org-mode . org-bullets-mode))
    #+END_SRC
+*** bullets
+   default: "◉ ○ ✸ ✿"
+   large: ♥ ● ◇ ✚ ✜ ☯ ◆ ♠ ♣ ♦ ☢ ❀ ◆ ◖ ▶
+   small: ► • ★ ▸
+   for ellipsis: ▼ ⤵ ↴ ⬎ ⤷ … ⋱
 ** TODO some org configurations
    23 2:15
    
@@ -280,7 +282,7 @@
        (setq tabbar-ruler-global-tabbar t)    ; get tabbar
        (setq tabbar-ruler-global-ruler t)     ; get global ruler
        (setq tabbar-ruler-popup-menu t)       ; get popup menu.
-       (setq tabbar-ruler-popup-toolbar t)    ; get popup toolbar
+       (setq tabbar-ruler-popup-toolbar nil)    ; get popup toolbar
        (setq tabbar-ruler-popup-scrollbar t))  ; show scroll-bar on mouse-move
 
    #+END_SRC
@@ -555,7 +557,7 @@
 	    (setq web-mode-enable-auto-quoting t))))
   #+END_SRC
 * C++
-  If C/C++ packages are needed use t for true otherwise nil.
+  If C/C++ packages are executed with typing nil.
 
   For C/C++ we use [[http://www.flycheck.org/en/latest/][flycheck]] for a live syntax checker.  For better
   completion for python we use [[https://github.com/davidhalter/jedi][Jedi]].  [[https://github.com/jorgenschaefer/elpy][Elpy]] combines a syntax checker,
@@ -721,3 +723,18 @@
 ** TODO smartparens
    Will do them soon
 
+* which operation system type 
+  [[http://ergoemacs.org/emacs/elisp_determine_OS_version.html][Quelle]]
+  #+BEGIN_SRC emacs-lisp
+    ;; check OS type
+    (cond
+     ((string-equal system-type "windows-nt") ; Microsoft Windows
+      (progn
+	(message "Microsoft Windows")))
+     ((string-equal system-type "darwin") ; Mac OS X
+      (progn
+	(message "Mac OS X")))
+     ((string-equal system-type "gnu/linux") ; linux
+      (progn
+	(message "Linux"))))
+  #+END_SRC
