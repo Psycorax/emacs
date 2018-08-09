@@ -40,7 +40,6 @@
     (if (>= emacs-major-version 26)
 	(progn (global-display-line-numbers-mode t)))
   #+END_SRC
-
 * misc features
 ** variables and globals
 ** try
@@ -124,8 +123,8 @@
    #+BEGIN_SRC emacs-lisp
      (use-package org-ac
        :ensure t
-       :init
-       (require 'org-ac)
+       :config
+       ;(require 'org-ac)
        (org-ac/config-default))
    #+END_SRC
 ** TODO company
@@ -249,12 +248,16 @@
 * GIT
 ** magit
    [[https://magit.vc/][Magit]] is a...
-
    #+BEGIN_SRC emacs-lisp
      (use-package magit
        :ensure t
+       :bind ("C-x g" . 'magit-status)
        :init
-       (bind-key "C-x g" 'magit-status))
+       (defface magit-section-highlight
+         '((((class color) (background light)) :background "gold5")
+           (((class color) (background  dark)) :background "gold4"))
+         "Face for highlighting the current section."
+         :group 'magit-faces))
    #+END_SRC
 * python
   If python packages are needed use t for true otherwise nil.
