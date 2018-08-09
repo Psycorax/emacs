@@ -1,6 +1,6 @@
 #+STARTUP: overview
-#+TITLE: My Initfile
-#+AUTHOR: Thomas Reisinger
+#+TITLE: myinit_basic
+#+AUTHOR: Psycorax
 #+DATE: <2018-08-08 Mi>
 
 * interface tweaks
@@ -15,54 +15,39 @@
     (fset 'yes-or-no-p 'y-or-n-p)
   #+END_SRC
 
-  highlights the line with the cursor
+** themes
+   There are several builtin themes that come with emacs out of the
+   box, you can choose between them by typing M-x
+   customize-themes. There you get an overview an can test these
+   themes.  To get them into you standard configuration just type the
+   following line into your configuration file.
+   #+BEGIN_SRC emacs-lisp
+     (load-theme 'tango-dark t)
+   #+END_SRC
+
+  highlights the line with the cursor. Needs to change cursor or face
+  background, when tango-dark theme is used
   #+BEGIN_SRC emacs-lisp
     (global-hl-line-mode t)
+    ;; (set-face-background hl-line-face "DodgerBlue2")
+    (set-cursor-color "DarkRed")
+    ;; (list-colors-display) ;; show all colors with names
   #+END_SRC
 
   line numbers in buffer
   #+BEGIN_SRC emacs-lisp
     ;; For Emacs > 26
     (if (>= emacs-major-version 26)
-	(progn (global-display-line-numbers-mode t))
-      (progn (global-linum-mode t)))
-
-    ;; For older Emacs
-    ;(global-linum-mode nil)
+	(progn (global-display-line-numbers-mode t)))
   #+END_SRC
-
-** beacon
-   flashes the cursor when scrolling
-#+BEGIN_SRC emacs-lisp
-  (use-package beacon
-    :ensure t
-    :custom (beacon-color "#110055" "blue")
-    :config
-    (beacon-mode 1)
-    )
-#+END_SRC
 
 * misc features
 ** variables and globals
-*** auto revert
-    Auto reloads the file if it gets changed
-    #+BEGIN_SRC emacs-lisp
-      (global-auto-revert-mode 1)
-      (setq auto-revert-verbose nil)
-    #+END_SRC
 ** try
    This package allowes you to [[https://github.com/larstvei/Try][try]] a package before installing it.
    #+BEGIN_SRC emacs-lisp
      (use-package try
 		  :ensure t)
-   #+END_SRC
-** which key
-   [[https://github.com/justbur/emacs-which-key][Whick-key]] does... TODO.
-   #+BEGIN_SRC emacs-lisp
-     (use-package which-key
-       :ensure t
-       :config
-       (which-key-mode))
    #+END_SRC
 ** hungry-delete
    [[https://github.com/nflath/hungry-delete][Hungry-delete]] deletes all whitespaces with one delete.
@@ -81,59 +66,6 @@
        :config 
        (global-set-key (kbd "C-+") 'er/expand-region))
    #+END_SRC
-** TODO Smart Region
-** narrow and widen
-   For easier use of narrow and widen, the following code helps, it
-   narrows when widen and it widens when the page is narrowed.  This
-   code is from [[http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html][Endless Parentheses]], a bit customized.
-   #+BEGIN_SRC emacs-lisp
-     (defun narrow-or-widen-dwim (p)
-       "Widen if buffer is narrowed, narrow-dwim otherwise.
-     Dwim means: region, org-src-block, org-subtree, or
-     defun, whichever applies first. Narrowing to
-     org-src-block actually calls `org-edit-src-code'.
-
-     With prefix P, don't widen, just narrow even if buffer
-     is already narrowed."
-       (interactive "P")
-       (declare (interactive-only))
-       (cond ((and (buffer-narrowed-p) (not p)) (widen))
-	     ((region-active-p)
-	      (narrow-to-region (region-beginning)
-				(region-end)))
-	     ((derived-mode-p 'org-mode)
-	      ;; `org-edit-src-code' is not a real narrowing
-	      ;; command. Remove this first conditional if
-	      ;; you don't want it.
-	      (cond ((ignore-errors (org-edit-src-code) t)
-		     (delete-other-windows))
-		    ((ignore-errors (org-narrow-to-block) t))
-		    (t (org-narrow-to-subtree))))
-	     ((derived-mode-p 'latex-mode)
-	      (LaTeX-narrow-to-environment))
-	     (t (narrow-to-defun))))
-
-     ;;(define-key endless/toggle-map "n"
-     ;;  #'narrow-or-widen-dwim)
-     ;; This line actually replaces Emacs' entire narrowing
-     ;; keymap, that's how much I like this command. Only
-     ;; copy it if that's what you want.
-     (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
-     (add-hook 'LaTeX-mode-hook
-	       (lambda ()
-		 (define-key LaTeX-mode-map "\C-xn"
-		   nil)))
-   #+END_SRC
-** TODO iedit
-   [[https://github.com/victorhge/iedit][Iedit]] is for enhaced editing, like replacing. Very powerfull
-   because it has nomething like an built in narrowing, widening and
-   expand region for marked word. TODO: Check 18 comments for more
-   choices of multiple editing. Default keybinding is C-; but this is
-   overwritten by Flyspell.
-   #+BEGIN_SRC emacs-lisp
-     ;(use-package iedit
-     ;  :ensure t)
-   #+END_SRC
 ** TODO multiple cursors
    #+BEGIN_SRC emacs-lisp
      (use-package multiple-cursors
@@ -150,7 +82,7 @@
   #+BEGIN_SRC emacs-lisp
     (global-set-key (kbd "<f5>") 'revert-buffer)
     (global-set-key (kbd "\e\ei")
-		    (lambda () (interactive) (find-file "~/Documents/git/emacs/myinit.org")))
+		    (lambda () (interactive) (find-file "~/Documents/git/emacs/myinit_basic.org")))
     (global-set-key (kbd "\e\ec")
 			(lambda () (interactive) (find-file "~/Tests/CMakeLists.txt")))
     (global-set-key (kbd "\e\eb")
@@ -165,43 +97,28 @@
    #+BEGIN_SRC emacs-lisp
      
    #+END_SRC
-** org bullets
-   Fancy bullets instead of stars. Some symbols that can be used as
+** hide stars
+   Hide leading stars for a better view
    #+BEGIN_SRC emacs-lisp
-     (use-package org-bullets
-       :ensure t
-       :custom
-       (org-bullets-bullet-list '("•"))
-       (org-ellipsis "…")
-       :hook
-       (org-mode . org-bullets-mode))
-   #+END_SRC
-*** bullets
-   default: "◉ ○ ✸ ✿"
-   large: ♥ ● ◇ ✚ ✜ ☯ ◆ ♠ ♣ ♦ ☢ ❀ ◆ ◖ ▶
-   small: ► • ★ ▸
-   for ellipsis: ▼ ⤵ ↴ ⬎ ⤷ … ⋱
-** TODO some org configurations
-   23 2:15
-   
-   Org-capture for saving quick notes and adding them to a file.
-   #+BEGIN_SRC emacs-lisp
-     (global-set-key (kbd "C-c c") 'org-capture)
-   #+END_SRC
-   Some predefined templates for org-capture.
-   #+BEGIN_SRC emacs-lisp
-     (setq org-capture-templates
-	   '(("a" "Appointment" entry (file  "C:/Users/Psycorax_PC/Dropbox/emacs/orgfiles/gcal.org" "Appointments")
-	      "* TODO %?\n:PROPERTIES:\n\n:END:\nDEADLINE: %^T \n %i\n")
-	     ("n" "Note" entry (file+headline "C:/Users/Psycorax_PC/Dropbox/emac/orgfiles/notes.org" "Notes")
-	      "* Note %?\n%T")
-	     ("l" "Link" entry (file+headline "C:/Users/Psycorax_PC/Dropbox/emacs/orgfiles/links.org" "Links")
-	      "* %? %^L %^g \n%T" :prepend t)
-	     ("t" "To Do Item" entry (file+headline "C:/Users/Psycorax_PC/Dropbox/emacs/orgfiles/i.org" "To Do Items")
-	      "* %?\n%T" :prepend t)))
+     (setq org-hide-leading-stars t)
    #+END_SRC
 
-** org-ac
+* autocomplete
+** TODO auto-complete
+   [[https://github.com/auto-complete/auto-complete][Auto-complete]] does... TODO.
+   #+BEGIN_SRC emacs-lisp
+     (unless nil
+       (progn 
+         (use-package auto-complete
+           :ensure t)))
+           ;; :hook
+           ;; (org-mode . auto-complete-mode)
+           ;;:init
+           ;;(progn
+             ;;(ac-config-default)))))
+     ;; (global-auto-complete-mode t)
+   #+END_SRC
+*** org-ac
    [[https://github.com/aki2o/org-ac][Org-ac]] means org autocomplete it is a autocomplete for org. Don't
    use it together with company mode!!!
    #+BEGIN_SRC emacs-lisp
@@ -210,28 +127,6 @@
        :init
        (require 'org-ac)
        (org-ac/config-default))
-   #+END_SRC
-** TODO org evaluate code blocks
-   #+BEGIN_SRC emacs-lisp
-     (org-babel-do-load-languages
-      'org-babel-load-languages
-      '((python . t)))
-   #+END_SRC
-
-* autocomplete
-** TODO auto-complete
-   [[https://github.com/auto-complete/auto-complete][Auto-complete]] does... TODO.
-   #+BEGIN_SRC emacs-lisp
-     (unless t
-       (progn 
-	 (use-package auto-complete
-	   :ensure t
-	   :init
-	   (progn
-	     (ac-config-default)
-	     (global-auto-complete-mode t)
-	     ))
-	 ))
    #+END_SRC
 ** TODO company
    [[https://github.com/company-mode/company-mode][Company]] 
@@ -242,9 +137,8 @@
 	   :ensure t
 	   :config
 	   (setq company-idle-delay 0)
-	   (setq company-minimum-prefix-length 3)
-	   (global-company-mode t))
-	 ))
+	   (setq company-minimum-prefix-length 3))))
+	   ;; (global-company-mode t)
    #+END_SRC
 * buffers
 ** builtin
@@ -252,50 +146,8 @@
    #+BEGIN_SRC emacs-lisp
      (defalias 'list-buffers 'ibuffer-other-window)
    #+END_SRC
-** tabbar
-   tabbar is a package that ads tabbars for the buffers
-   #+BEGIN_SRC emacs-lisp
-     (use-package tabbar
-       :ensure t
-       :config (tabbar-mode 1)
-       )
-   #+END_SRC
-** TODO tabbar-ruler
-   fancier tabbar [[https://github.com/mattfidler/tabbar-ruler.el][tabbar ruler]]
-   needs some packages to be installed:
-   tabbar
-   power-line
-   mode-icons
-   #+BEGIN_SRC emacs-lisp
-     (use-package powerline
-       :ensure t
-       :config
-       (powerline-default-theme))
-
-     (use-package mode-icons
-       :ensure t
-       :config
-       (mode-icons-mode))
-
-     (use-package tabbar-ruler
-       :ensure t
-       :init
-       (setq tabbar-ruler-global-tabbar t)    ; get tabbar
-       (setq tabbar-ruler-global-ruler t)     ; get global ruler
-       (setq tabbar-ruler-popup-menu t)       ; get popup menu.
-       (setq tabbar-ruler-popup-toolbar nil)    ; get popup toolbar
-       (setq tabbar-ruler-popup-scrollbar t))  ; show scroll-bar on mouse-move
-
-   #+END_SRC
 * windows
 ** builtin
-*** windmove
-    Switch the windows by holding down the shift-key and using the
-    arrows. Does not work in all modes, because shortcuts are
-    used. Needs 4 keybindings to work properly.
-    #+BEGIN_SRC emacs-lisp
-      ;(windmove-default-keybindings)
-    #+END_SRC
 *** winner-mode
     Saves old window configurations. Mmove through them by pressing
     C-c left or right.
@@ -326,9 +178,9 @@
    built in completion with [[https://www.masteringemacs.org/article/introduction-to-ido-mode][ido mode]] comment out ido when ivy is in
    use
    #+BEGIN_SRC emacs-lisp
-     ;(setq ido-enable-flex-matching t)
-     ;(setq ido-everywhere t)
-     ;(ido-mode 1)
+     ;; (setq ido-enable-flex-matching t)
+     ;; (setq ido-everywhere t)
+     ;; (ido-mode 1)
    #+END_SRC
    aswell M-/ could be used, it looks for all previous words dynamically
 ** Swiper Ivy Counsel
@@ -336,23 +188,23 @@
     is aswell needed for swiper
     #+BEGIN_SRC emacs-lisp
       (use-package counsel
-	:ensure t
-	:bind
-	(("M-y" . counsel-yank-pop)
-	 :map ivy-minibuffer-map
-	 ("M-y" . ivy-next-line)))
+        :ensure t
+        :bind
+        (("M-y" . counsel-yank-pop)
+         :map ivy-minibuffer-map
+         ("M-y" . ivy-next-line)))
     #+END_SRC
 *** ivy
     TODO does what???
     #+BEGIN_SRC emacs-lisp
       (use-package ivy
-	:ensure t
-	:diminish (ivy-mode)
-	:bind ("C-x b" . ivy-switch-buffer)
-	:config
-	(ivy-mode 1)
-	(setq ivy-use-virtual-buffers t)
-	(setq ivy-display-style 'fancy))
+        :ensure t
+        :diminish (ivy-mode)
+        :bind ("C-x b" . ivy-switch-buffer)
+        :config
+        (ivy-mode 1)
+        (setq ivy-use-virtual-buffers t)
+        (setq ivy-display-style 'fancy))
     #+END_SRC
 *** swiper
     [[https://github.com/abo-abo/swiper][Swiper]] is a alternative to the built in isearch with [[https://github.com/abo-abo/swiper][swiper]], there
@@ -360,19 +212,19 @@
     backward. [[https://github.com/abo-abo/swiper][Swiper]] is based on ivy-mode.
     #+BEGIN_SRC emacs-lisp
       (use-package swiper
-	:ensure t
-	:bind (("C-s" . swiper)
-	       ("C-r" . swiper)
-	       ("C-c C-r" . ivy-resume)
-	       ("M-x" . counsel-M-x)
-	       ("C-x C-f" . counsel-find-file))
-	:config
-	(progn
-	  (ivy-mode 1)
-	  (setq ivy-use-virtual-buffers t)
-	  (setq ivy-display-style 'fancy)
-	  (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
-	  ))
+        :ensure t
+        :bind (("C-s" . swiper)
+              ("C-r" . swiper)
+              ("C-c C-r" . ivy-resume)
+              ("M-x" . counsel-M-x)
+              ("C-x C-f" . counsel-find-file))
+        :config
+        (progn
+          (ivy-mode 1)
+          (setq ivy-use-virtual-buffers t)
+          (setq ivy-display-style 'fancy)
+          (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+          ))
     #+END_SRC
 ** avy
    [[https://github.com/abo-abo/avy][Avy]] is used like a search, but just to visible text. It uses a
@@ -385,64 +237,6 @@
        :ensure t
        :bind ("M-s" . avy-goto-char))
    #+END_SRC
-** TODO helm
-   
-   #+BEGIN_SRC emacs-lisp
-   #+END_SRC
-* themes
-** builtin
-   There are several builtin themes that come with emacs out of the
-   box, you can choose between them by typing M-x
-   customize-themes. There you get an overview an can test these
-   themes.  To get them into you standard configuration just type the
-   following line into your configuration file.
-   #+BEGIN_SRC emacs-lisp
-     ;(load-theme 'tango-dark t)
-   #+END_SRC
-
-** external themes
-   themes made by the community
-   [[https://pawelbx.github.io/emacs-theme-gallery/][theme galery 1]]
-   [[https://emacsthemes.com/][theme galery 2]]
-*** zenburn
-    [[https://github.com/bbatsov/zenburn-emacs][zenburn-theme]]
-    #+BEGIN_SRC emacs-lisp
-      (use-package zenburn-theme
-	:ensure t
-	:config (load-theme 'zenburn t))
-    #+END_SRC
-*** hemisu
-    [[https://github.com/andrzejsliwa/hemisu-theme][hemisu-theme]]
-    #+BEGIN_SRC emacs-lisp
-      ;(use-package hemisu-theme
-      ;  :ensure t
-      ;  :config (load-theme 'hemisu-dark t))
-    #+END_SRC
-* presentation
-** org-reveal
-   [[https://github.com/yjwen/org-reveal][Org-reveal]] works with [[https://github.com/hakimel/reveal.js/][reveal.js]], that is basically an javascript
-   library for easy presentations written in html. [[https://github.com/yjwen/org-reveal][Org-reveal]] is now
-   able to export an org file to a html site that can be opend in
-   every browser. It is very easy to use and looks fancy, i recommend
-   it for every kind of presentation that has no special things in it.
-   Attention: ox-reveal needs [[https://orgmode.org/elpa.html][Org ELPA]], because Org builtin from gnu,
-   is mostly outdated.
-   #+BEGIN_SRC emacs-lisp
-     (use-package ox-reveal
-       :ensure t
-       :config
-       (require 'ox-reveal)
-       (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
-       (setq org-reveal-mathjax t)
-       )
-
-       ; for syntax highliting of the html code
-     (use-package htmlize
-       :ensure t)
-   #+END_SRC
-
-** TODO beamer
-** TODO that one that works directly in org mode
 * undo tree
   [[https://www.emacswiki.org/emacs/UndoTree][Undo-tree]] vizualizes the undo mechanic and enables the choice to
   switch into old undo branches if needed. Acessable through C-x u.
@@ -453,27 +247,6 @@
     (global-undo-tree-mode))
   #+END_SRC
 * GIT
-** git gutter
-   [[https://github.com/syohex/emacs-git-gutter/tree/00c05264af046b5ce248e5b0bc42f117d9c27a09][Git gutter]] is a simple package for vizualizing changes in the
-   files, you can aswell choose which changes you wanna stage, which
-   to revert etc.
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package git-gutter
-       :ensure t
-       :init
-       (global-git-gutter-mode +1))
-   #+END_SRC
-
-** git timemachine
-   [[https://melpa.org/#/git-timemachine][Git timemachine]] is for checking older versions of a file pretty
-   quick. Usage: M-x git-timemachine and then with p and n.
-
-   #+BEGIN_SRC emacs-lisp
-     (use-package git-timemachine
-       :ensure t)
-   #+END_SRC
-
 ** magit
    [[https://magit.vc/][Magit]] is a...
 
@@ -492,7 +265,7 @@
   is a package for making templates, that can be saved in the snippets
   folder.
   #+BEGIN_SRC emacs-lisp
-    (unless nil
+    (unless t
       (progn
 	(use-package flycheck
 	  :ensure t
@@ -543,19 +316,19 @@
   these issues.
   #+BEGIN_SRC emacs-lisp
     (unless t
-	(progn
-	  (use-package web-mode
-	    :ensure t
-	    :config
-	    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-	    (setq web-mode-engines-alist
-		  '(("django"    . "\\.html\\'")))
-	    (setq web-mode-ac-sources-alist
-		  '(("css" . (ac-source-css-property))
-		    ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+        (progn
+          (use-package web-mode
+            :ensure t
+            :config
+            (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+            (setq web-mode-engines-alist
+                  '(("django"    . "\\.html\\'")))
+            (setq web-mode-ac-sources-alist
+                  '(("css" . (ac-source-css-property))
+                    ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
 
-	    (setq web-mode-enable-auto-closing t)
-	    (setq web-mode-enable-auto-quoting t))))
+            (setq web-mode-enable-auto-closing t)
+            (setq web-mode-enable-auto-quoting t))))
   #+END_SRC
 * C++
   If C/C++ packages are executed with typing nil.
@@ -568,7 +341,7 @@
   set indent:
   (setq c-basic-offset 4)
   #+BEGIN_SRC emacs-lisp
-    (unless nil
+    (unless t
 	(progn
 	  (use-package flycheck
 	    :ensure t
@@ -681,42 +454,40 @@
   texlive-latex-recommended texlive-latex-extra
   texlive-fonts-recommended texlive-base texlive-latex-base
   #+BEGIN_SRC emacs-lisp
-    (defun build-latex ()
-      (interactive)
-      (message "building pdf")
-      ;; check if directories exist
-      (unless (file-directory-p "./build")
-	(progn (mkdir "./build")))
-      (if (file-directory-p "./front")
-	  (progn (unless (file-directory-p "./build/front")
-		   (progn (mkdir "./build/front")))))
-      (if (file-directory-p "./back")
-	  (progn (unless (file-directory-p "./build/back")
-		   (progn (mkdir "./build/back")))))
-      (if (file-directory-p "./chapters")
-	  (progn (unless (file-directory-p "./build/chapters")
-		   (progn (mkdir "./build/chapters")))))
-      (unless (file-exists-p "./build/main.bcf")
-	(progn (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build " buffer-file-name))))
-      (shell-command (concat "biber ./build/main"))
-      (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build " buffer-file-name))
-      ;;(message "pdf built successfully")
-      )
-    (defun mkdir-latex ()
-      (interactive)
-      (message "making default latex project directory")
-      (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
-      (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0 3))
-      (if (equal myFileEnding "tex")
-	  (progn
-	    (shell-command (concat "mkdir -p " myFileName "/{images}"))
-	    (shell-command (concat "mv " myFileName "." myFileEnding " ./" myFileName "/" myFileName "." myFileEnding))
-	    )))
+    (unless nil
+      (progn 
+        (defun build-latex ()
+          (interactive)
+          (message "building pdf")
+          ;; check if directories exist
+          (unless (file-directory-p "./build")
+            (progn (mkdir "./build")))
+          (if (file-directory-p "./front")
+              (progn (unless (file-directory-p "./build/front")
+                       (progn (mkdir "./build/front")))))
+          (if (file-directory-p "./back")
+              (progn (unless (file-directory-p "./build/back")
+                       (progn (mkdir "./build/back")))))
+          (if (file-directory-p "./chapters")
+              (progn (unless (file-directory-p "./build/chapters")
+                       (progn (mkdir "./build/chapters")))))
+          (unless (file-exists-p "./build/main.bcf")
+            (progn (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build " buffer-file-name))))
+          (shell-command (concat "biber ./build/main"))
+          (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build " buffer-file-name))
+          ;;(message "pdf built successfully")
+          )
+        (defun mkdir-latex ()
+          (interactive)
+          (message "making default latex project directory")
+          (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
+          (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0 3))
+          (if (equal myFileEnding "tex")
+              (progn
+                (shell-command (concat "mkdir -p " myFileName "/{images}"))
+                (shell-command (concat "mv " myFileName "." myFileEnding " ./" myFileName "/" myFileName "." myFileEnding))
+                )))))
   #+END_SRC
-
-* TODO STUFF
-** TODO smartparens
-   Will do them soon
 
 * which operation system type 
   [[http://ergoemacs.org/emacs/elisp_determine_OS_version.html][Quelle]]
