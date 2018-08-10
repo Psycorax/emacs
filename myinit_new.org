@@ -51,6 +51,8 @@
                     (lambda () (interactive) (find-file "~/Documents/git/emacs/myinit_new.org")))
     (global-set-key (kbd "\e\ec")
                         (lambda () (interactive) (find-file "~/Tests/Programms/CMakeLists.txt")))
+    (global-set-key (kbd "\e\ey")
+                        (lambda () (interactive) (find-file "~/Tests/Programms/__main__.py")))
     (global-set-key (kbd "\e\eb")
                     (lambda () (interactive) (find-file "~/Documents/git/bac/main.tex")))
     (global-set-key (kbd "\e\ep")
@@ -275,7 +277,7 @@
        :ensure t
        :config
        (setq company-idle-delay 0) ;if it causes problems changes it to 1
-       (setq company-minimum-prefix-length 3))
+       (setq company-minimum-prefix-length 2))
    #+END_SRC
 * org-mode
 ** org-elpa
@@ -341,6 +343,20 @@
       (global-flycheck-mode t))
 
   #+END_SRC
+** beautifier
+   #+BEGIN_SRC emacs-lisp
+     ;; beautifier
+     ;; if needed without tabs just change tabify
+     ;; to untabify for dumb editors
+     (defun beautify-me (&optional noTabs)
+       "beautify whole buffer"
+       (interactive)
+       (delete-trailing-whitespace)
+       (indent-region (point-min) (point-max) nil)
+       (if noTabs
+	   (untabify (point-min) (point-max))
+	 (tabify (point-min) (point-max))))
+   #+END_SRC
 * C++
   If C/C++ packages are executed with typing nil.
 
@@ -354,29 +370,31 @@
 ** mkdir build debug
    #+BEGIN_SRC emacs-lisp
      ;; hydra for the project management
-     (global-set-key
-      (kbd "<f8>")
+     (defhydra hydra-C-Cpp (:color blue :hint nil)
+       "
+	  _b_: Beautify tabify    _t_: build Tags     _S_: Start debugging
+	  _u_: beautify Untabify  _d_: build Debug    _C_: Clean project
+	  ^ ^                     _r_: build Release
+	  "
+       ("b" (beautify-me))
+       ("u" (beautify-me "t"))
+       ("t" (build-ctags-C-Cpp))
+       ("d" (build-C-Cpp "d"))
+       ("r" (build-C-Cpp))
+       ("S" (debug-C-Cpp) :color green)
+       ("C" (clear-all-C-Cpp) :color red))
 
-      (defhydra CCPP (:color blue :hint nil)
-	"
-     _b_: Beautify tabify    _t_: build Tags     _S_: Start debugging
-     _u_: beautify Untabify  _d_: build Debug    _C_: Clean project
-     ^ ^                     _r_: build Release
-     "
-	("b" (beautify-C-Cpp))
-	("u" (beautify-C-Cpp "t"))
-	("t" (build-ctags-C-Cpp))
-	("d" (build-C-Cpp "d"))
-	("r" (build-C-Cpp))
-	("S" (debug-C-Cpp) :color green)
-	("C" (clear-all-C-Cpp) :color red)
-	))
+     ;; bind hydra to c and cpp mode maps
+     (add-hook 'c-mode-hook
+	       (lambda () (local-set-key (kbd "<f8>") 'hydra-C-Cpp/body)))
+     (add-hook 'c++-mode-hook
+	       (lambda () (local-set-key (kbd "<f8>") 'hydra-C-Cpp/body)))
 
      ;; tagging system with ctags
      (defun build-ctags-C-Cpp ()
        (interactive)
        (message "building project tags")
-       (cd "../")
+       (cd (concat (file-name-directory buffer-file-name) "../"))
        (shell-command (concat "ctags -e -R --extra=+fq --exclude=debug --exclude=release --exclude=bin --exclude=tests --exclude=doc --exclude=.git --exclude=public -f TAGS ."))
        (visit-tags-table "TAGS")
        (cd "./src")
@@ -427,18 +445,18 @@
 	   (progn
 	     (unless (file-directory-p "../debug")
 	       (progn (mkdir "../debug")))
-	     (cd "../debug")
+	     (cd (concat (file-name-directory buffer-file-name) "../debug"))
 	     (shell-command "cmake -DCMAKE_BUILD_TYPE=Debug ..")
 	     (compile "make -C .")	     
 	     )
 	 (progn
 	   (unless (file-directory-p "../release")
 	     (progn (mkdir "../release")))
-	   (cd "../release")
+	   (cd (concat (file-name-directory buffer-file-name) "../release"))
 	   (shell-command "cmake -DCMAKE_BUILD_TYPE=Release ..")
 	   (compile "make -C .")      
 	   ))
-       (cd "../src"))
+       (cd (concat (file-name-directory buffer-file-name) "../src")))
 
      ;; starts gdb and opens it in many windows mode
      (defun debug-C-Cpp ()
@@ -449,7 +467,7 @@
        (gdb "gdb -i=mi ../bin/dbg")
        )
    #+END_SRC
-** style and beautify
+** style
    #+BEGIN_SRC emacs-lisp
      (defun set-my-style-c-cpp ()
        (c-set-style "stroustrup")
@@ -458,18 +476,6 @@
 
      (add-hook 'c-mode-hook 'set-my-style-c-cpp)
      (add-hook 'c++-mode-hook 'set-my-style-c-cpp)
-
-     ;; beatuifier for c and C++
-     ;; if needed without tabs just change tabify
-     ;; to untabify for dumb editors
-     (defun beautify-C-Cpp (&optional noTabs)
-       "beautify whole buffer"
-       (interactive)
-       (delete-trailing-whitespace)
-       (indent-region (point-min) (point-max) nil)
-       (if noTabs
-	   (untabify (point-min) (point-max))
-	 (tabify (point-min) (point-max))))
    #+END_SRC
 ** packages
    #+BEGIN_SRC emacs-lisp
@@ -545,49 +551,143 @@
   a project manager, a completion. Choose wich one you like. [[https://github.com/joaotavora/yasnippet][Yasnippet]]
   is a package for making templates, that can be saved in the snippets
   folder.
+** hydra mkdir tags clear
+   #+BEGIN_SRC emacs-lisp
+     ;; hydra for the project management
+     (defhydra hydra-py (:color blue :hint nil)
+       "
+     _b_: Beautify tabify     _p_: run Python         _t_: build Tags	  
+     _u_: beautify Untabify   _e_: Evaluate buffer    _Q_: Quit python	  
+     ^ ^                      _s_: Switch to Shell    _C_: Clean project
+     "
+       ("b" (beautify-me))
+       ("u" (beautify-me "t"))
+       ("p" (run-python))
+       ("e" (python-shell-send-buffer))
+       ("s" (python-shell-switch-to-shell))
+       ("t" (build-ctags-py))       
+       ("Q" (progn (python-shell-switch-to-shell)(comint-send-eof)(delete-window)))
+       ("C" (clear-all-py) :color red))
+
+     ;; bind hydra to python mode
+     (add-hook 'python-mode-hook
+	       (lambda () (local-set-key (kbd "<f8>") 'hydra-py/body)))
+
+     ;; creates a directory python projects
+     (defun mkdir-py ()
+       (interactive)
+       (message "making default python project directory")
+       (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
+       (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0))
+       (if (equal myFileEnding "py")
+	   (progn
+	     (message "Insert Directoryname: ")
+	     (setq myDirName (read-from-minibuffer "Projecdirectoryname: "))
+	     (shell-command (concat "mkdir -p " myDirName "/{lib,doc,tests}"))
+	     (shell-command (concat "mv " myFileName "." myFileEnding " ./" myDirName "/" myFileName "." myFileEnding))
+	     (kill-buffer (concat myFileName "." myFileEnding))
+	     (message myDirName)
+	     (cd (concat "~/Tests/Programms/"myDirName))
+	     (find-file (concat myFileName"." myFileEnding)
+			))))
+
+     ;; func to check if currently in lib directory
+     (defun in-dir (x)
+       (setq curDir (file-name-directory buffer-file-name))
+       (setq count (- (length(split-string curDir "/")) 2))
+       (setq dir (substring (nth count (split-string curDir "/"))))
+       (equal dir x))
+
+     ;; tagging system with ctags
+     (defun build-ctags-py ()
+       (interactive)
+       (message "building project tags")
+       (if (in-dir "lib")
+	   (progn
+	     (cd (concat (file-name-directory buffer-file-name) "../"))
+	     (message "in dir lib")))
+       (if (file-directory-p "./lib")
+	   (progn
+	     (shell-command (concat "ctags -e -R --extra=+fq --exclude=build --exclude=dist --exclude=doc --exclude=test --exclude=.git --exclude=main.spec -f TAGS ."))
+	     (visit-tags-table "TAGS")
+	     (message "tags built successfully"))))
+
+     ;; clear build directories
+     ;; clear TAGS table as well, dont do this in big projects
+     ;; it will take a while to rebuild the TAGS table
+     (defun clear-all-py ()
+       (message "clear all")
+       (if (in-dir "lib")
+	   (progn
+	     (cd (concat (file-name-directory buffer-file-name) "../"))
+	     (message "in dir lib")))
+       (if (file-directory-p "./build")
+	   (shell-command "rm -r ./build"))
+       (if (file-directory-p "./dist")
+	   (shell-command "rm -r ./dist"))
+       (if (file-exists-p "./main.spec")
+	   (shell-command "rm -r ./main.spec"))
+       (if (file-exists-p "./TAGS")
+	   (shell-command "rm ./TAGS")))
+   #+END_SRC
+** packages
   #+BEGIN_SRC emacs-lisp
-    (unless t
+    ;; with or without jedi
+    (setq use_elpy t)
+
+    ;; add hooks
+    (add-hook 'python-mode-hook 'company-mode)
+    (add-hook 'python-mode-hook 'yas-minor-mode)
+
+    (if use_elpy
       (progn
-	(use-package flycheck
-	  :ensure t
-	  :init
-	  (global-flycheck-mode t))
-
-	(use-package jedi
-	  :ensure t
-	  :init
-	  (add-hook 'python-mode-hook 'jedi:setup)
-	  (add-hook 'python-mode-hook 'jedi:ac-setup))
-
 	(use-package elpy
 	  :ensure t
 	  :config 
-	  (elpy-enable))
+	  (elpy-enable))))
+  #+END_SRC
+* LaTeX
+  packages for latex auf linux: sudo apt-get install
+  texlive-latex-recommended texlive-latex-extra
+  texlive-fonts-recommended texlive-base texlive-latex-base
+  #+BEGIN_SRC emacs-lisp
+    (defun build-latex ()
+      (interactive)
+      (message "building pdf")
+      (if (in-dir "chapters")
+	  (cd (concat (file-name-directory buffer-file-name) "../")))
+      ;; check if in a valid latex dir
+      (if (file-directory-p "./images")
+	  (progn
+	    ;; check if directories exist otherwise create them
+	    (unless (file-directory-p "./build")
+	      (progn (mkdir "./build")))
+	    (if (file-directory-p "./front")
+		(progn (unless (file-directory-p "./build/front")
+			 (progn (mkdir "./build/front")))))
+	    (if (file-directory-p "./back")
+		(progn (unless (file-directory-p "./build/back")
+			 (progn (mkdir "./build/back")))))
+	    (if (file-directory-p "./chapters")
+		(progn (unless (file-directory-p "./build/chapters")
+			 (progn (mkdir "./build/chapters")))))
+	    (unless (file-exists-p "./build/main.bcf")
+	      (progn (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))))
+	    (shell-command (concat "biber ./build/main"))
+	    (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))
+	    (message "pdf built successfully"))
+	(message "not in a valid directory")))
 
-	(use-package yasnippet
-	  :ensure t
-	  :config
-	  (use-package yasnippet-snippets
-	    :ensure t)
-	  (yas-reload-all))
-
-	(add-hook 'python-mode-hook 'yas-minor-mode)
-
-	(defun build-ctags ()
-	  (interactive)
-	  (message "building project tags")
-	  (let ((root "/"))
-	    (shell-command (concat "ctags -e -R --extra=+fq --exclude=db --exclude=test --exclude=.git --exclude=public -f " root "TAGS " root)))
-	  (visit-project-tags)
-	  (message "tags built successfully"))
-
-	(defun build-python ()
-	  (interactive)
-	  (message "building python project")
-	  (let ((root "/"))
-	    (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build main.tex")))
-	  (message "python project built successfully"))
-	))
+    (defun mkdir-latex ()
+      (interactive)
+      (message "making default latex project directory")
+      (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
+      (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0 3))
+      (if (equal myFileEnding "tex")
+	  (progn
+	    (shell-command (concat "mkdir -p " myFileName "/{images}"))
+	    (shell-command (concat "mv " myFileName "." myFileEnding " ./" myFileName "/" myFileName "." myFileEnding))
+	    )))
   #+END_SRC
 * web-mode
   If web development packages are needed use t for true otherwise nil.
@@ -610,45 +710,6 @@
 
             (setq web-mode-enable-auto-closing t)
             (setq web-mode-enable-auto-quoting t))))
-  #+END_SRC
-* LaTeX
-  packages for latex auf linux: sudo apt-get install
-  texlive-latex-recommended texlive-latex-extra
-  texlive-fonts-recommended texlive-base texlive-latex-base
-  #+BEGIN_SRC emacs-lisp
-    (unless t
-      (progn 
-	(defun build-latex ()
-	  (interactive)
-	  (message "building pdf")
-	  ;; check if directories exist
-	  (unless (file-directory-p "./build")
-	    (progn (mkdir "./build")))
-	  (if (file-directory-p "./front")
-	      (progn (unless (file-directory-p "./build/front")
-		       (progn (mkdir "./build/front")))))
-	  (if (file-directory-p "./back")
-	      (progn (unless (file-directory-p "./build/back")
-		       (progn (mkdir "./build/back")))))
-	  (if (file-directory-p "./chapters")
-	      (progn (unless (file-directory-p "./build/chapters")
-		       (progn (mkdir "./build/chapters")))))
-	  (unless (file-exists-p "./build/main.bcf")
-	    (progn (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build " buffer-file-name))))
-	  (shell-command (concat "biber ./build/main"))
-	  (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build " buffer-file-name))
-	  ;;(message "pdf built successfully")
-	  )
-	(defun mkdir-latex ()
-	  (interactive)
-	  (message "making default latex project directory")
-	  (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
-	  (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0 3))
-	  (if (equal myFileEnding "tex")
-	      (progn
-		(shell-command (concat "mkdir -p " myFileName "/{images}"))
-		(shell-command (concat "mv " myFileName "." myFileEnding " ./" myFileName "/" myFileName "." myFileEnding))
-		)))))
   #+END_SRC
 
 * which operation system type 
