@@ -651,43 +651,63 @@
   texlive-latex-recommended texlive-latex-extra
   texlive-fonts-recommended texlive-base texlive-latex-base
   #+BEGIN_SRC emacs-lisp
-    (defun build-latex ()
-      (interactive)
-      (message "building pdf")
-      (if (in-dir "chapters")
-	  (cd (concat (file-name-directory buffer-file-name) "../")))
-      ;; check if in a valid latex dir
-      (if (equal (length (file-expand-wildcards "*.tex")) 1)
-	  (progn
-	    ;; check if directories exist otherwise create them
-	    (unless (file-directory-p "./build")
-	      (progn (mkdir "./build")))
-	    (if (file-directory-p "./front")
-		(progn (unless (file-directory-p "./build/front")
-			 (progn (mkdir "./build/front")))))
-	    (if (file-directory-p "./back")
-		(progn (unless (file-directory-p "./build/back")
-			 (progn (mkdir "./build/back")))))
-	    (if (file-directory-p "./chapters")
-		(progn (unless (file-directory-p "./build/chapters")
-			 (progn (mkdir "./build/chapters")))))
-	    (unless (file-exists-p "./build/main.bcf")
-	      (progn (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))))
-	    (shell-command (concat "biber ./build/main"))
-	    (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))
-	    (message "pdf built successfully"))
-	(message "not in a valid directory")))
+    ;; hydra for the project management
+    (defhydra hydra-tex (:color blue :hint nil)
+      "
+	 _b_: Build PDF           _p_: nil    _t_: nil
+	 _u_: nil                 _e_: nil    _Q_: nil
+	 ^ ^                      _s_: nil    _C_: nil
+	 "
+      ("b" (build-latex))
+      ("u" (nil))
+      ("p" (nil))
+      ("e" (nil))
+      ("s" (nil))
+      ("t" (nil))
+      ("Q" (nil))
+      ("C" (nil)))
 
-    (defun mkdir-latex ()
-      (interactive)
-      (message "making default latex project directory")
-      (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
-      (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0 3))
-      (if (equal myFileEnding "tex")
-	  (progn
-	    (shell-command (concat "mkdir -p " myFileName "/{images}"))
-	    (shell-command (concat "mv " myFileName "." myFileEnding " ./" myFileName "/" myFileName "." myFileEnding))
-	    )))
+      ;; bind hydra to python mode
+      (add-hook 'latex-mode-hook
+		(lambda () (local-set-key (kbd "<f8>") 'hydra-tex/body)))
+
+      (defun build-latex ()
+	(interactive)
+	(message "building pdf")
+	(if (in-dir "chapters")
+	    (cd (concat (file-name-directory buffer-file-name) "../")))
+	;; check if in a valid latex dir
+	(if (equal (length (file-expand-wildcards "*.tex")) 1)
+	    (progn
+	      ;; check if directories exist otherwise create them
+	      (unless (file-directory-p "./build")
+		(progn (mkdir "./build")))
+	      (if (file-directory-p "./front")
+		  (progn (unless (file-directory-p "./build/front")
+			   (progn (mkdir "./build/front")))))
+	      (if (file-directory-p "./back")
+		  (progn (unless (file-directory-p "./build/back")
+			   (progn (mkdir "./build/back")))))
+	      (if (file-directory-p "./chapters")
+		  (progn (unless (file-directory-p "./build/chapters")
+			   (progn (mkdir "./build/chapters")))))
+	      (unless (file-exists-p "./build/main.bcf")
+		(progn (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))))
+	      (shell-command (concat "biber ./build/main"))
+	      (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))
+	      (message "pdf built successfully"))
+	  (message "not in a valid directory")))
+
+      (defun mkdir-latex ()
+	(interactive)
+	(message "making default latex project directory")
+	(setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
+	(setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0 3))
+	(if (equal myFileEnding "tex")
+	    (progn
+	      (shell-command (concat "mkdir -p " myFileName "/{images}"))
+	      (shell-command (concat "mv " myFileName "." myFileEnding " ./" myFileName "/" myFileName "." myFileEnding))
+	      )))
   #+END_SRC
 * web-mode
   If web development packages are needed use t for true otherwise nil.
