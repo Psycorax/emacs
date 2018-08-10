@@ -19,11 +19,11 @@
     Don't use the alternative for Emacs <26, beacause it slows emacs
     down. Use line at bottom for information about cursor and buffer
     postions.
-   #+BEGIN_SRC emacs-lisp
+    #+BEGIN_SRC emacs-lisp
      ;; For Emacs > 26
      (if (>= emacs-major-version 26)
        	 (progn (global-display-line-numbers-mode t)))
-   #+END_SRC
+    #+END_SRC
 ** themes
    There are several builtin themes that come with emacs out of the
    box, you can choose between them by typing M-x
@@ -34,14 +34,14 @@
      (load-theme 'tango-dark t)
    #+END_SRC
 
-  highlights the line with the cursor. Needs to change cursor or face
-  background, when tango-dark theme is used
-  #+BEGIN_SRC emacs-lisp
+   highlights the line with the cursor. Needs to change cursor or face
+   background, when tango-dark theme is used
+   #+BEGIN_SRC emacs-lisp
     (global-hl-line-mode t)
     ;; (set-face-background hl-line-face "DodgerBlue2")
     (set-cursor-color "DarkRed")
     ;; (list-colors-display) ;; show all colors with names
-  #+END_SRC
+   #+END_SRC
 * keybindings
   Here are some personalized keybindings, for open files, that are
   often used.
@@ -244,6 +244,11 @@
        (c++-mode . smartparens-mode)
        (python-mode . smartparens-mode))
    #+END_SRC
+** hydra
+   #+BEGIN_SRC emacs-lisp
+     (use-package hydra
+       :ensure t)
+   #+END_SRC
 * autocomplete
 ** auto-complete-package
    [[https://github.com/auto-complete/auto-complete][Auto-complete]]
@@ -254,15 +259,15 @@
        (ac-flyspell-workaround))
    #+END_SRC
 *** org-ac
-   [[https://github.com/aki2o/org-ac][Org-ac]] means org autocomplete it is a autocomplete for org. Don't
-   use it together with company mode!!! This enables autocomplete in
-   org-mode automatically.
-   #+BEGIN_SRC emacs-lisp
+    [[https://github.com/aki2o/org-ac][Org-ac]] means org autocomplete it is a autocomplete for org. Don't
+    use it together with company mode!!! This enables autocomplete in
+    org-mode automatically.
+    #+BEGIN_SRC emacs-lisp
      (use-package org-ac
        :ensure t
        :config
        (org-ac/config-default))
-   #+END_SRC
+    #+END_SRC
 ** Company
    [[https://github.com/company-mode/company-mode][Company]] 
    #+BEGIN_SRC emacs-lisp
@@ -280,8 +285,8 @@
    installing use-package!!!
    
    (use-package org
-       :ensure org-plus-contrib
-       :pin org)
+   :ensure org-plus-contrib
+   :pin org)
 ** hide stars
    Hide leading stars for a better view
    #+BEGIN_SRC emacs-lisp
@@ -347,58 +352,103 @@
   set indent:
   (setq c-basic-offset 2)
 ** mkdir build debug
-  #+BEGIN_SRC emacs-lisp
-    ;; creates a directory history for c and cpp projects
-    (defun mkdir-C-CPP ()
-      (interactive)
-      (message "making default C-Cpp project directory")
-      (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
-      (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0))
-      (if (equal myFileEnding "txt")
-	  (progn
-	    (message "Insert Directoryname: ")
-	    (setq myDirName (read-from-minibuffer "Projecdirectoryname: "))
-	    (shell-command (concat "mkdir -p " myDirName "/{src,inc,doc,tests}"))
-	    (shell-command (concat "mv " myFileName "." myFileEnding " ./" myDirName "/" myFileName "." myFileEnding))
-	    (kill-buffer (concat myFileName "." myFileEnding))
-	    (message myDirName)
-	    (cd (concat "~/Tests/Programms/"myDirName"/src"))
-	    (find-file "main.cpp")
-	    )))
+   #+BEGIN_SRC emacs-lisp
+     ;; hydra for the project management
+     (global-set-key
+      (kbd "<f8>")
 
-    ;; yasnippet contains a snippet for CMakeLists.txt file builds a
-    ;; release and dbg version, cut it out if not needed, or project is to
-    ;; big to be always builded in two ways
-    (defun build-C-Cpp (type)
-      (interactive)
-      (message "executing cmake and make(need to be in the src directory!)")
-      ;; check if directories exist
-      (unless (file-directory-p "../release")
-	(progn (mkdir "../release")))
-      (unless (file-directory-p "../debug")
-	(progn (mkdir "../debug")))
-      (unless (file-directory-p "../bin")
-	(progn (mkdir "../bin")))
-      (cd "../release")
-      (shell-command "cmake -DCMAKE_BUILD_TYPE=Release ..")
-      (compile "make -C .")
-      ;(shell-command "make")
-      (cd "../debug")
-      (shell-command "cmake -DCMAKE_BUILD_TYPE=Debug ..")
-      (compile "make -C .")
-      ;(shell-command "make")
-      (cd "../src")
-      )
+      (defhydra CCPP (:color blue :hint nil)
+	"
+     _b_: Beautify tabify    _t_: build Tags     _S_: Start debugging
+     _u_: beautify Untabify  _d_: build Debug    _C_: Clean project
+     ^ ^                     _r_: build Release
+     "
+	("b" (beautify-C-Cpp))
+	("u" (beautify-C-Cpp "t"))
+	("t" (build-ctags-C-Cpp))
+	("d" (build-C-Cpp "d"))
+	("r" (build-C-Cpp))
+	("S" (debug-C-Cpp) :color green)
+	("C" (clear-all-C-Cpp) :color red)
+	))
 
-    ;; starts gdb and opens it in many windows mode
-    (defun debug-C-CPP ()
-      (interactive)
-      (message "debug C-Cpp Project")
-      (gdb-enable-debug)
-      (gdb-many-windows)
-      (gdb "gdb -i=mi ../bin/dbg")
-      )
-  #+END_SRC
+     ;; tagging system with ctags
+     (defun build-ctags-C-Cpp ()
+       (interactive)
+       (message "building project tags")
+       (cd "../")
+       (shell-command (concat "ctags -e -R --extra=+fq --exclude=debug --exclude=release --exclude=bin --exclude=tests --exclude=doc --exclude=.git --exclude=public -f TAGS ."))
+       (visit-tags-table "TAGS")
+       (cd "./src")
+       (message "tags built successfully"))
+
+     ;; clear build directories
+     ;; clear TAGS table as well, dont do this in big projects
+     ;; it will take a while to rebuild the TAGS table
+     (defun clear-all-C-Cpp ()
+       (if (file-directory-p "../debug")
+	   (shell-command "rm -r ../debug"))
+       (if (file-directory-p "../release")
+	   (shell-command "rm -r ../release"))
+       (if (file-directory-p "../bin")
+	   (shell-command "rm -r ../bin"))
+       (if (file-exists-p "../TAGS")
+	   (shell-command "rm ../TAGS"))
+       )
+
+     ;; creates a directory history for c and cpp projects
+     (defun mkdir-C-Cpp ()
+       (interactive)
+       (message "making default C-Cpp project directory")
+       (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
+       (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0))
+       (if (equal myFileEnding "txt")
+	   (progn
+	     (message "Insert Directoryname: ")
+	     (setq myDirName (read-from-minibuffer "Projecdirectoryname: "))
+	     (shell-command (concat "mkdir -p " myDirName "/{src,inc,doc,tests}"))
+	     (shell-command (concat "mv " myFileName "." myFileEnding " ./" myDirName "/" myFileName "." myFileEnding))
+	     (kill-buffer (concat myFileName "." myFileEnding))
+	     (message myDirName)
+	     (cd (concat "~/Tests/Programms/"myDirName"/src"))
+	     (find-file "main.cpp")
+	     )))
+
+     ;; yasnippet contains a snippet for CMakeLists.txt file builds a
+     ;; release and dbg version, cut it out if not needed, or project is to
+     ;; big to be always builded in two ways
+     (defun build-C-Cpp (&optional type)
+       (interactive)
+       (message "executing cmake and make(need to be in the src directory!)")
+       ;; check if directories exist
+       (unless (file-directory-p "../bin")
+	 (progn (mkdir "../bin")))
+       (if (equal type "d")
+	   (progn
+	     (unless (file-directory-p "../debug")
+	       (progn (mkdir "../debug")))
+	     (cd "../debug")
+	     (shell-command "cmake -DCMAKE_BUILD_TYPE=Debug ..")
+	     (compile "make -C .")	     
+	     )
+	 (progn
+	   (unless (file-directory-p "../release")
+	     (progn (mkdir "../release")))
+	   (cd "../release")
+	   (shell-command "cmake -DCMAKE_BUILD_TYPE=Release ..")
+	   (compile "make -C .")      
+	   ))
+       (cd "../src"))
+
+     ;; starts gdb and opens it in many windows mode
+     (defun debug-C-Cpp ()
+       (interactive)
+       (message "debug C-Cpp Project")
+       (gdb-enable-debug)
+       (gdb-many-windows)
+       (gdb "gdb -i=mi ../bin/dbg")
+       )
+   #+END_SRC
 ** style and beautify
    #+BEGIN_SRC emacs-lisp
      (defun set-my-style-c-cpp ()
@@ -412,15 +462,17 @@
      ;; beatuifier for c and C++
      ;; if needed without tabs just change tabify
      ;; to untabify for dumb editors
-     (defun beautify-c-c++ ()
+     (defun beautify-C-Cpp (&optional noTabs)
        "beautify whole buffer"
        (interactive)
        (delete-trailing-whitespace)
        (indent-region (point-min) (point-max) nil)
-       (tabify (point-min) (point-max)))
+       (if noTabs
+	   (untabify (point-min) (point-max))
+	 (tabify (point-min) (point-max))))
    #+END_SRC
 ** packages
-  #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
     ;; with or without irony
     (setq use_irony nil)
 
@@ -484,7 +536,7 @@
 
 	;; (cmake-ide-setup)
 ;;	))
- #+END_SRC
+   #+END_SRC
 * python
   If python packages are needed use t for true otherwise nil.
 
