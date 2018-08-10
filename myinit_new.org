@@ -657,7 +657,7 @@
       (if (in-dir "chapters")
 	  (cd (concat (file-name-directory buffer-file-name) "../")))
       ;; check if in a valid latex dir
-      (if (file-directory-p "./images")
+      (if (equal (length (file-expand-wildcards "*.tex")) 1)
 	  (progn
 	    ;; check if directories exist otherwise create them
 	    (unless (file-directory-p "./build")
