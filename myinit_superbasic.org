@@ -15,7 +15,15 @@
      ;; change to shorter answers
      (fset 'yes-or-no-p 'y-or-n-p)
    #+END_SRC
-
+*** line numbers in buffer
+    Don't use the alternative for Emacs <26, beacause it slows emacs
+    down. Use line at bottom for information about cursor and buffer
+    postions.
+   #+BEGIN_SRC emacs-lisp
+     ;; For Emacs > 26
+     (if (>= emacs-major-version 26)
+       	 (progn (global-display-line-numbers-mode t)))
+   #+END_SRC
 ** themes
    There are several builtin themes that come with emacs out of the
    box, you can choose between them by typing M-x
@@ -34,15 +42,9 @@
     (set-cursor-color "DarkRed")
     ;; (list-colors-display) ;; show all colors with names
   #+END_SRC
-
-  line numbers in buffer
-  #+BEGIN_SRC emacs-lisp
-    ;; For Emacs > 26
-    (if (>= emacs-major-version 26)
-	(progn (global-display-line-numbers-mode t)))
-  #+END_SRC
 * keybindings
-  Here you can use personalized keybindings.
+  Here are some personalized keybindings, for open files, that are
+  often used.
   #+BEGIN_SRC emacs-lisp
     (global-set-key (kbd "<f5>") 'revert-buffer)
     (global-set-key (kbd "\e\ei")
@@ -84,6 +86,18 @@
      (setq ido-enable-flex-matching t)
      (setq ido-everywhere t)
      (ido-mode 1)
+   #+END_SRC
+** avy
+   Avy is needed by ace-window so we can use it as search as well.
+   [[https://github.com/abo-abo/avy][Avy]] is used like a search, but just to visible text. It uses a
+   char-based decision tree.  an alternative would be [[https://github.com/winterTTr/ace-jump-mode][ace-jump-mode]].
+   Also avy-goto-char-2 is available, there you have to type in 2
+   chars of the word you are looking for, instead of one. This results
+   in a smaller decision tree.
+   #+BEGIN_SRC emacs-lisp
+     (use-package avy
+       :ensure t
+       :bind ("M-s" . avy-goto-char-2))
    #+END_SRC
 * misc features
 ** try

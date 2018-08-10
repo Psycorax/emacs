@@ -4,6 +4,7 @@
 #+DATE: <2018-08-08 Mi>
 
 * interface tweaks
+** basics
   #+BEGIN_SRC emacs-lisp
     ;; hide startup screen
     (setq inhibit-startup-message t)
