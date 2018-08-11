@@ -557,16 +557,17 @@
      ;; hydra for the project management
      (defhydra hydra-py (:color blue :hint nil)
        "
-     _b_: Beautify tabify     _p_: run Python         _t_: build Tags	  
+     _b_: Beautify tabify     _p_: run Python         _E_: make Executable
      _u_: beautify Untabify   _e_: Evaluate buffer    _Q_: Quit python	  
-     ^ ^                      _s_: Switch to Shell    _C_: Clean project
+     _t_: build Tags          _s_: Switch to Shell    _C_: Clean project
      "
        ("b" (beautify-me))
        ("u" (beautify-me "t"))
+       ("t" (build-ctags-py))
        ("p" (run-python))
        ("e" (python-shell-send-buffer))
        ("s" (python-shell-switch-to-shell))
-       ("t" (build-ctags-py))       
+       ("E" (make-executable-py))
        ("Q" (progn (python-shell-switch-to-shell)(comint-send-eof)(delete-window)))
        ("C" (clear-all-py) :color red))
 
@@ -630,6 +631,12 @@
 	   (shell-command "rm -r ./main.spec"))
        (if (file-exists-p "./TAGS")
 	   (shell-command "rm ./TAGS")))
+
+     (defun make-executable-py ()
+       (if (in-dir "lib")
+	   (cd (concat (file-name-directory buffer-file-name) "../")))
+       (if (equal (length (file-expand-wildcards "*.py")) 1)
+	   (shell-command (concat "pyinstaller *.py"))))
    #+END_SRC
 ** packages
   #+BEGIN_SRC emacs-lisp
