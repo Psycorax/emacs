@@ -315,35 +315,52 @@
 * Programming
   Here are some packages and configurations that aren't language
   specific.
+** basic functions
+   #+BEGIN_SRC emacs-lisp
+     ;; func to check filedirectory
+     (defun this-file-in-dir (x)
+       (setq curDir (file-name-directory buffer-file-name))
+       (setq count (- (length(split-string curDir "/")) 2))
+       (setq dir (substring (nth count (split-string curDir "/"))))
+       (equal dir x))
+
+     ;; func to check directory, just use if set!!!
+     (defun default-in-dir (x)
+       (setq curDir default-directory)
+       (setq count (- (length(split-string curDir "/")) 2))
+       (setq dir (substring (nth count (split-string curDir "/"))))
+       (equal dir x))
+   #+END_SRC
   
-  Code for adding yasnippet support for all company backends is from
-  [[https://emacs.stackexchange.com/questions/10431/get-company-to-show-suggestions-for-yasnippet-names][Source]].
-  #+BEGIN_SRC emacs-lisp    
-    (use-package yasnippet
-      :ensure t
-      :config
-      (use-package yasnippet-snippets
-	:ensure t)
-      (yas-reload-all))
+   Code for adding yasnippet support for all company backends is from
+   [[https://emacs.stackexchange.com/questions/10431/get-company-to-show-suggestions-for-yasnippet-names][Source]].
+** packages
+   #+BEGIN_SRC emacs-lisp    
+     (use-package yasnippet
+       :ensure t
+       :config
+       (use-package yasnippet-snippets
+	 :ensure t)
+       (yas-reload-all))
 
-    ;; Add yasnippet support for all company backends
-    (defvar company-mode/enable-yas t
-      "Enable yasnippet for all backends.")
+     ;; Add yasnippet support for all company backends
+     (defvar company-mode/enable-yas t
+       "Enable yasnippet for all backends.")
 
-    (defun company-mode/backend-with-yas (backend)
-      (if (or (not company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
-	  backend
-	(append (if (consp backend) backend (list backend))
-		'(:with company-yasnippet))))
+     (defun company-mode/backend-with-yas (backend)
+       (if (or (not company-mode/enable-yas) (and (listp backend) (member 'company-yasnippet backend)))
+	   backend
+	 (append (if (consp backend) backend (list backend))
+		 '(:with company-yasnippet))))
 
-    (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+     (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
 
-    (use-package flycheck
-      :ensure t
-      :init
-      (global-flycheck-mode t))
+     (use-package flycheck
+       :ensure t
+       :init
+       (global-flycheck-mode t))
 
-  #+END_SRC
+   #+END_SRC
 ** beautifier
    #+BEGIN_SRC emacs-lisp
      ;; beautifier
@@ -593,18 +610,11 @@
 	     (find-file (concat myFileName"." myFileEnding)
 			))))
 
-     ;; func to check if currently in lib directory
-     (defun in-dir (x)
-       (setq curDir (file-name-directory buffer-file-name))
-       (setq count (- (length(split-string curDir "/")) 2))
-       (setq dir (substring (nth count (split-string curDir "/"))))
-       (equal dir x))
-
      ;; tagging system with ctags
      (defun build-ctags-py ()
        (interactive)
        (message "building project tags")
-       (if (in-dir "lib")
+       (if (this-file-in-dir "lib")
 	   (progn
 	     (cd (concat (file-name-directory buffer-file-name) "../"))
 	     (message "in dir lib")))
@@ -619,7 +629,7 @@
      ;; it will take a while to rebuild the TAGS table
      (defun clear-all-py ()
        (message "clear all")
-       (if (in-dir "lib")
+       (if (this-file-in-dir "lib")
 	   (progn
 	     (cd (concat (file-name-directory buffer-file-name) "../"))
 	     (message "in dir lib")))
@@ -633,15 +643,15 @@
 	   (shell-command "rm ./TAGS")))
 
      (defun make-executable-py ()
-       (if (in-dir "lib")
+       (if (this-file-in-dir "lib")
 	   (cd (concat (file-name-directory buffer-file-name) "../")))
        (if (equal (length (file-expand-wildcards "*.py")) 1)
 	   (shell-command (concat "pyinstaller *.py"))))
    #+END_SRC
 ** packages
-  #+BEGIN_SRC emacs-lisp
-    ;; with or without jedi
-    (setq use_elpy t)
+   #+BEGIN_SRC emacs-lisp
+    ;; with or without elpy
+    (setq use_elpy nil)
 
     ;; add hooks
     (add-hook 'python-mode-hook 'company-mode)
@@ -653,7 +663,7 @@
 	  :ensure t
 	  :config 
 	  (elpy-enable))))
-  #+END_SRC
+   #+END_SRC
 * LaTeX
   packages for latex auf linux: sudo apt-get install
   texlive-latex-recommended texlive-latex-extra
@@ -675,48 +685,158 @@
       ("Q" (nil))
       ("C" (nil)))
 
-      ;; bind hydra to python mode
-      (add-hook 'latex-mode-hook
-		(lambda () (local-set-key (kbd "<f8>") 'hydra-tex/body)))
+    ;; bind hydra to vhdl mode
+    (add-hook 'latex-mode-hook
+	      (lambda () (local-set-key (kbd "<f8>") 'hydra-tex/body)))
 
-      (defun build-latex ()
-	(interactive)
-	(message "building pdf")
-	(if (in-dir "chapters")
-	    (cd (concat (file-name-directory buffer-file-name) "../")))
-	;; check if in a valid latex dir
-	(if (equal (length (file-expand-wildcards "*.tex")) 1)
-	    (progn
-	      ;; check if directories exist otherwise create them
-	      (unless (file-directory-p "./build")
-		(progn (mkdir "./build")))
-	      (if (file-directory-p "./front")
-		  (progn (unless (file-directory-p "./build/front")
-			   (progn (mkdir "./build/front")))))
-	      (if (file-directory-p "./back")
-		  (progn (unless (file-directory-p "./build/back")
-			   (progn (mkdir "./build/back")))))
-	      (if (file-directory-p "./chapters")
-		  (progn (unless (file-directory-p "./build/chapters")
-			   (progn (mkdir "./build/chapters")))))
-	      (unless (file-exists-p "./build/main.bcf")
-		(progn (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))))
-	      (shell-command (concat "biber ./build/main"))
-	      (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))
-	      (message "pdf built successfully"))
-	  (message "not in a valid directory")))
+    (defun build-latex ()
+      (interactive)
+      (message "building pdf")
+      (if (this-file-in-dir "chapters")
+	  (cd (concat (file-name-directory buffer-file-name) "../")))
+      ;; check if in a valid latex dir
+      (if (equal (length (file-expand-wildcards "*.tex")) 1)
+	  (progn
+	    ;; check if directories exist otherwise create them
+	    (unless (file-directory-p "./build")
+	      (progn (mkdir "./build")))
+	    (if (file-directory-p "./front")
+		(progn (unless (file-directory-p "./build/front")
+			 (progn (mkdir "./build/front")))))
+	    (if (file-directory-p "./back")
+		(progn (unless (file-directory-p "./build/back")
+			 (progn (mkdir "./build/back")))))
+	    (if (file-directory-p "./chapters")
+		(progn (unless (file-directory-p "./build/chapters")
+			 (progn (mkdir "./build/chapters")))))
+	    (unless (file-exists-p "./build/main.bcf")
+	      (progn (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))))
+	    (shell-command (concat "biber ./build/main"))
+	    (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))
+	    (message "pdf built successfully"))
+	(message "not in a valid directory")))
 
-      (defun mkdir-latex ()
-	(interactive)
-	(message "making default latex project directory")
-	(setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
-	(setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0 3))
-	(if (equal myFileEnding "tex")
-	    (progn
-	      (shell-command (concat "mkdir -p " myFileName "/{images}"))
-	      (shell-command (concat "mv " myFileName "." myFileEnding " ./" myFileName "/" myFileName "." myFileEnding))
-	      )))
+    (defun mkdir-latex ()
+      (interactive)
+      (message "making default latex project directory")
+      (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
+      (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0 3))
+      (if (equal myFileEnding "tex")
+	  (progn
+	    (shell-command (concat "mkdir -p " myFileName "/{images}"))
+	    (shell-command (concat "mv " myFileName "." myFileEnding " ./" myFileName "/" myFileName "." myFileEnding))
+	    )))
   #+END_SRC
+
+* vhdl
+** hydra
+   #+BEGIN_SRC emacs-lisp
+     ;; hydra for the project management
+     (defhydra hydra-vhdl (:color blue :hint nil)
+       "
+			   _b_: Beautify            _s_: set Tcl file         _t_: build tags table
+			   _c_: Compile(ghdl)       _S_: Simulate modelsim    _C_: Clear directory
+			   "
+       ("b" (vhdl-beautify-buffer))
+       ("c" (compile-vhdl-ghdl))
+       ("s" (find-set-tcl-file))
+       ("S" (sim-vhdl))
+       ("t" (build-ctags-vhdl))
+       ("C" (clear-all-vhdl)))
+
+     ;; bind hydra to vhdl mode
+     (add-hook 'vhdl-mode-hook
+	       (lambda () (local-set-key (kbd "<f8>") 'hydra-vhdl/body)))
+
+     (setq my-modelsim-path "~/intelFPGA_pro/18.0/modelsim_ase/linuxaloem/")
+     (setq my-sim-tcl-file "")
+
+     (defun find-set-tcl-file ()
+       (if (this-file-in-dir "src")
+	   (progn
+	     (message "in src")
+	     (cd (concat (file-name-directory buffer-file-name) "../sim"))))
+       (setq tcl-file (read-from-minibuffer "(optional) tcl-file: "))
+       (if (equal (nth 1 (split-string tcl-file "\\.")) "tcl")
+	   (progn 
+	     (message "valid input")
+	     (setq my-sim-tcl-file tcl-file)))
+       (if (equal (length (file-expand-wildcards "*.tcl")) 1)
+	   (progn
+	     (message "found exactly one tcl file")
+	     (setq my-sim-tcl-file (nth 0 (file-expand-wildcards "*.tcl")))))
+       (if (equal my-sim-tcl-file "")
+	   (message "no tcl file found")
+	 (message (concat "sim tcl file set to: " my-sim-tcl-file))))
+
+     (defun sim-vhdl ()
+       (if (this-file-in-dir "src")
+	   (progn (message "in src")
+		  (cd (concat (file-name-directory buffer-file-name) "../sim")))
+	 (cd (file-name-directory buffer-file-name)))
+       (message (concat "now in " (file-name-directory buffer-file-name)))
+       (if (default-in-dir "sim")
+	   (shell-command (concat my-modelsim-path "./vsim -do \"do " my-sim-tcl-file "\" &"))
+	 (message "wrong folder, need to be in src or sim folder")))
+
+     ;; creates a directory for vhdl projects
+     (defun mkdir-vhdl ()
+       (interactive)
+       (message "making default vhdl project directory")
+       (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
+       (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0))
+       (if (equal myFileEnding "vhd")
+	   (progn
+	     (setq myDirName (read-from-minibuffer "Projec directory name: "))
+	     (shell-command (concat "mkdir -p " myDirName "/{sim/work,syn,doc,src/work}"))
+	     (shell-command (concat "mv " myFileName "." myFileEnding " ./" myDirName "/src/" myFileName "." myFileEnding))
+	     (kill-buffer (concat myFileName "." myFileEnding))
+	     (cd (concat "~/Tests/Programms/"myDirName"/src/"))
+	     (find-file (concat myFileName"." myFileEnding)))))
+
+     ;; clear build directories
+     ;; clear TAGS table as well, dont do this in big projects
+     ;; it will take a while to rebuild the TAGS table
+     (defun clear-all-vhdl ()
+       (message "clear all")
+       (if (this-file-in-dir "src")
+	   (progn
+	     (cd (concat (file-name-directory buffer-file-name) "../"))))
+       (if (file-directory-p "./src/work")
+	   (progn
+	     (shell-command "rm -r ./src/work")
+	     (shell-command "mkdir -p ./src/work")))
+       (if (file-directory-p "./sim/work")
+	   (progn
+	     (shell-command "rm -r ./sim/work")
+	     (shell-command "mkdir -p ./sim/work")))
+       (if (file-exists-p "./src/TAGS")
+	   (shell-command "rm ./src/TAGS")))
+
+     ;; tagging system with ctags
+     (defun build-ctags-vhdl ()
+       (interactive)
+       (message "building project tags")
+       (if (this-file-in-dir "src")
+	   (progn
+	     (cd (file-name-directory buffer-file-name))
+	     (shell-command (concat "ctags -e -R --extra=+fq --exclude=work -f TAGS ."))
+	     (visit-tags-table "TAGS")
+	     (message "tags built successfully"))))
+
+     (defun compile-vhdl-ghdl ()
+       (cd (file-name-directory buffer-file-name))
+       (vhdl-set-compiler "GHDL")
+       (vhdl-compile))
+   #+END_SRC
+** packages
+   #+BEGIN_SRC emacs-lisp
+     ;; add hooks
+     (add-hook 'vhdl-mode-hook 'company-mode)
+     (add-hook 'vhdl-mode-hook 'yas-minor-mode)
+     (add-hook 'tcl-mode-hook 'company-mode)
+     (add-hook 'tcl-mode-hook 'yas-minor-mode)
+   #+END_SRC
 * web-mode
   If web development packages are needed use t for true otherwise nil.
 
@@ -739,7 +859,6 @@
             (setq web-mode-enable-auto-closing t)
             (setq web-mode-enable-auto-quoting t))))
   #+END_SRC
-
 * which operation system type 
   [[http://ergoemacs.org/emacs/elisp_determine_OS_version.html][Quelle]]
   #+BEGIN_SRC emacs-lisp
