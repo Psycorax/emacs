@@ -672,10 +672,10 @@
     ;; hydra for the project management
     (defhydra hydra-tex (:color blue :hint nil)
       "
-	 _b_: Build PDF           _p_: nil    _t_: nil
-	 _u_: nil                 _e_: nil    _Q_: nil
-	 ^ ^                      _s_: nil    _C_: nil
-	 "
+		 _b_: Build PDF           _p_: nil    _t_: nil
+		 _u_: nil                 _e_: nil    _Q_: nil
+		 ^ ^                      _s_: nil    _C_: Clear directory
+		 "
       ("b" (build-latex))
       ("u" (nil))
       ("p" (nil))
@@ -683,7 +683,7 @@
       ("s" (nil))
       ("t" (nil))
       ("Q" (nil))
-      ("C" (nil)))
+      ("C" (clear-all-tex)))
 
     ;; bind hydra to vhdl mode
     (add-hook 'latex-mode-hook
@@ -713,21 +713,45 @@
 	      (progn (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))))
 	    (shell-command (concat "biber ./build/main"))
 	    (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))
-	    (message "pdf built successfully"))
-	(message "not in a valid directory")))
+	    (message "build pdf executed")
+	    (end-of-buffer-other-window 0))
+	(progn 
+	  (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0))
+	  (if (equal myFileEnding "tex")
+	      (progn (unless (file-directory-p "./build")
+		       (progn (mkdir "./build")))
+		     (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build " buffer-file-name)))
+	    (message "no tex file found, try to execute command from your main tex file")))))
 
-    (defun mkdir-latex ()
+    ;; creates a directory for vhdl projects
+    (defun mkdir-tex ()
       (interactive)
       (message "making default latex project directory")
       (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
-      (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0 3))
+      (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0))
       (if (equal myFileEnding "tex")
 	  (progn
-	    (shell-command (concat "mkdir -p " myFileName "/{images}"))
-	    (shell-command (concat "mv " myFileName "." myFileEnding " ./" myFileName "/" myFileName "." myFileEnding))
-	    )))
-  #+END_SRC
+	    (setq myDirName (read-from-minibuffer "Projec directory name: "))
+	    (shell-command (concat "mkdir -p " myDirName "/images"))
+	    (shell-command (concat "mv " myFileName "." myFileEnding " ./" myDirName "/" myFileName "." myFileEnding))
+	    (kill-buffer (concat myFileName "." myFileEnding))
+	    (cd (concat "~/Tests/Programms/"myDirName"/"))
+	    (find-file (concat myFileName"." myFileEnding)))))
 
+    ;; clear tex directory
+    (defun clear-all-tex ()
+      (message "clear all")
+      (if (not (file-directory-p "./images"))
+	  (progn
+	    (cd (concat (file-name-directory buffer-file-name) "../"))
+	    (message "one out")))
+      (if (file-directory-p "./images")
+	  (progn
+	    (if (file-directory-p "./build")
+		(shell-command "rm -r ./build")
+	      (message "nothing to clear")))
+	(message "in wrong directory")))
+  #+END_SRC
 * vhdl
 ** hydra
    #+BEGIN_SRC emacs-lisp
