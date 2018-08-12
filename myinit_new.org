@@ -262,17 +262,18 @@
        (setq projectile-completion-system 'ivy))
 
      ;; (use-package counsel-projectile
-     ;;   :ensure t
-     ;;   :config
-     ;;   (counsel-projectile-on))
+     ;;	  :ensure t
+     ;;	  :config
+     ;;	  (counsel-projectile-on))
    #+END_SRC
 * GUI
 ** set GUI elements here
    #+BEGIN_SRC emacs-lisp
-     (setq use-zenburn nil)
+     (setq use-zenburn t)
      (setq use-hemisu-dark nil)
-     (setq use-tabbar-ruler nil)
-     (setq use-org-bullets nil)
+     (setq use-tabbar-ruler t)
+     (setq use-org-bullets t)
+     (setq use-treemacs t)
    #+END_SRC
 ** extern themes
    themes made by the community
@@ -296,76 +297,114 @@
     #+END_SRC
 ** tabbar ruler
    #+BEGIN_SRC emacs-lisp
-   
+     (if use-tabbar-ruler
+	 (progn
+	   (use-package tabbar
+	     :ensure t
+	     :config (tabbar-mode 1)
+	     )
+
+	   (use-package powerline
+	     :ensure t
+	     :config
+	     (powerline-default-theme))
+
+	   (use-package mode-icons
+	     :ensure t
+	     :config
+	     (mode-icons-mode))
+
+	   (use-package tabbar-ruler
+	     :ensure t
+	     :init
+	     (setq tabbar-ruler-global-tabbar t)    ; get tabbar
+	     (setq tabbar-ruler-global-ruler t)     ; get global ruler
+	     (setq tabbar-ruler-popup-menu t)              ; get popup menu.
+	     (setq tabbar-ruler-popup-toolbar nil)   ; get popup toolbar
+	     (setq tabbar-ruler-popup-scrollbar t))  ; show scroll-bar on mouse-move
+	   ))
    #+END_SRC
 ** orgbullets
    #+BEGIN_SRC emacs-lisp
-   
+     (if use-org-bullets
+	 (progn
+	   (use-package org-bullets
+	     :ensure t
+	     :custom
+	     (org-bullets-bullet-list '("-")); symbol instead of stars
+	     (org-ellipsis "_")		; symbol when chapter is collapsed
+	     :hook
+	     (org-mode . org-bullets-mode))))
    #+END_SRC
+*** bullets(some bullets to use)
+    default: "◉ ○ ✸ ✿"
+    large: ♥ ● ◇ ✚ ✜ ☯ ◆ ♠ ♣ ♦ ☢ ❀ ◆ ◖ ▶
+    small: ► • ★ ▸
+    for ellipsis: ▼ ⤵ ↴ ⬎ ⤷ … ⋱
 ** treemacs
    #+BEGIN_SRC emacs-lisp
-     (use-package treemacs
-       :ensure t
-       :defer t
-       :init
-       (with-eval-after-load 'winum
-	 (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
-       :config
-       (progn
-	 (setq treemacs-collapse-dirs              (if (executable-find "python") 3 0)
-	       treemacs-deferred-git-apply-delay   0.5
-	       treemacs-display-in-side-window     t
-	       treemacs-file-event-delay           5000
-	       treemacs-file-follow-delay          0.2
-	       treemacs-follow-after-init          t
-	       treemacs-follow-recenter-distance   0.1
-	       treemacs-goto-tag-strategy          'refetch-index
-	       treemacs-indentation                2
-	       treemacs-indentation-string         " "
-	       treemacs-is-never-other-window      nil
-	       treemacs-no-png-images              nil
-	       treemacs-project-follow-cleanup     nil
-	       treemacs-persist-file               (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
-	       treemacs-recenter-after-file-follow nil
-	       treemacs-recenter-after-tag-follow  nil
-	       treemacs-show-hidden-files          t
-	       treemacs-silent-filewatch           nil
-	       treemacs-silent-refresh             nil
-	       treemacs-sorting                    'alphabetic-desc
-	       treemacs-space-between-root-nodes   t
-	       treemacs-tag-follow-cleanup         t
-	       treemacs-tag-follow-delay           1.5
-	       treemacs-width                      35)
+     (if use-treemacs
+	 (progn (use-package treemacs
+		  :ensure t
+		  :defer t
+		  :init
+		  (with-eval-after-load 'winum
+		    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+		  :config
+		  (progn
+		    (setq treemacs-collapse-dirs             (if (executable-find "python") 3 0)
+			  treemacs-deferred-git-apply-delay  0.5
+			  treemacs-display-in-side-window    nil
+			  treemacs-file-event-delay          5000
+			  treemacs-file-follow-delay         0.2
+			  treemacs-follow-after-init         t
+			  treemacs-follow-recenter-distance  0.1
+			  treemacs-goto-tag-strategy         'refetch-index
+			  treemacs-indentation               2
+			  treemacs-indentation-string                " "
+			  treemacs-is-never-other-window     nil
+			  treemacs-no-png-images             nil
+			  treemacs-project-follow-cleanup    nil
+			  treemacs-persist-file              (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+			  treemacs-recenter-after-file-follow nil
+			  treemacs-recenter-after-tag-follow nil
+			  treemacs-show-hidden-files         t
+			  treemacs-silent-filewatch          nil
+			  treemacs-silent-refresh            nil
+			  treemacs-sorting                   'alphabetic-desc
+			  treemacs-space-between-root-nodes  t
+			  treemacs-tag-follow-cleanup                t
+			  treemacs-tag-follow-delay          1.5
+			  treemacs-width                     35)
 
-	 ;; The default width and height of the icons is 22 pixels. If you are
-	 ;; using a Hi-DPI display, uncomment this to double the icon size.
-	 ;;(treemacs-resize-icons 44)
+		    ;; The default width and height of the icons is 22 pixels. If you are
+		    ;; using a Hi-DPI display, uncomment this to double the icon size.
+		    ;;(treemacs-resize-icons 44)
 
-	 (treemacs-follow-mode t)
-	 (treemacs-filewatch-mode t)
-	 (treemacs-fringe-indicator-mode t)
-	 (pcase (cons (not (null (executable-find "git")))
-		      (not (null (executable-find "python3"))))
-	   (`(t . t)
-	    (treemacs-git-mode 'extended))
-	   (`(t . _)
-	    (treemacs-git-mode 'simple))))
-       :bind
-       (:map global-map
-	     ("M-0"       . treemacs-select-window)
-	     ("C-x t 1"   . treemacs-delete-other-windows)
-	     ("C-x t t"   . treemacs)
-	     ("C-x t B"   . treemacs-bookmark)
-	     ("C-x t C-t" . treemacs-find-file)
-	     ("C-x t M-t" . treemacs-find-tag)))
+		    (define-key treemacs-mode-map [mouse-1] #'treemacs-single-click-expand-action)
 
-     (use-package treemacs-projectile
-       :after treemacs projectile
-       :ensure t)
+		    (treemacs-follow-mode t)
+		    (treemacs-filewatch-mode t)
+		    (treemacs-fringe-indicator-mode t)
+		    (pcase (cons (not (null (executable-find "git")))
+				 (not (null (executable-find "python3"))))
+		      (`(t . t)
+		       (treemacs-git-mode 'extended))
+		      (`(t . _)
+		       (treemacs-git-mode 'simple))))
+		  :bind
+		  (:map global-map
+			("M-0"       . treemacs-select-window)
+			("C-x t 1"   . treemacs-delete-other-windows)
+			("C-x t t"   . treemacs)
+			("C-x t B"   . treemacs-bookmark)
+			("C-x t C-t" . treemacs-find-file)
+			("C-x t M-t" . treemacs-find-tag)))
+
+		(use-package treemacs-projectile
+		  :after treemacs projectile
+		  :ensure t)))
    #+END_SRC
-
-   #+RESULTS:
-
 * autocomplete
 ** auto-complete-package
    [[https://github.com/auto-complete/auto-complete][Auto-complete]]
@@ -542,9 +581,9 @@
      ;; hydra for the project management
      (defhydra hydra-C-Cpp (:color blue :hint nil)
        "
-	  _b_: Beautify tabify	  _t_: build Tags     _S_: Start debugging
-	  _u_: beautify Untabify  _d_: build Debug    _C_: Clean project
-	  ^ ^			  _r_: build Release
+	  _b_: Beautify tabify	       _t_: build Tags	   _S_: Start debugging
+	  _u_: beautify Untabify       _d_: build Debug	   _C_: Clean project
+	  ^ ^			       _r_: build Release
 	  "
        ("b" (beautify-me))
        ("u" (beautify-me "t"))
