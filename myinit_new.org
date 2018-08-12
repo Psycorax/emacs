@@ -332,7 +332,7 @@
 	     :ensure t
 	     :custom
 	     (org-bullets-bullet-list '("-")); symbol instead of stars
-	     (org-ellipsis "_")		; symbol when chapter is collapsed
+	     ;;(org-ellipsis "_")		; symbol when chapter is collapsed
 	     :hook
 	     (org-mode . org-bullets-mode))))
    #+END_SRC
@@ -511,9 +511,17 @@
    [[https://emacs.stackexchange.com/questions/10431/get-company-to-show-suggestions-for-yasnippet-names][Source]].
 ** packages
    #+BEGIN_SRC emacs-lisp
+     (use-package ag
+       :ensure t
+       :bind (("M-g s" . ag)
+	      ("M-g p" . ag-project)
+	      ("M-g P" . ag-project-at-point)))
+
      (use-package dumb-jump
        :ensure t
-       :bind (("M-g j" . dumb-jump-go)))
+       :bind (("M-g j" . dumb-jump-go)
+	      ("M-g J" . dumb-jump-go-other-window)
+	      ("M-g b" . dumb-jump-back)))
 
      (use-package yasnippet
        :ensure t
