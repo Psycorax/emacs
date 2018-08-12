@@ -252,14 +252,6 @@
    #+BEGIN_SRC emacs-lisp
      (defalias 'list-buffers 'ibuffer-other-window)
    #+END_SRC
-** tabbar
-   tabbar is a package that ads tabbars for the buffers
-   #+BEGIN_SRC emacs-lisp
-     (use-package tabbar
-       :ensure t
-       :config (tabbar-mode 1)
-       )
-   #+END_SRC
 ** TODO tabbar-ruler
    fancier tabbar [[https://github.com/mattfidler/tabbar-ruler.el][tabbar ruler]]
    needs some packages to be installed:
@@ -267,6 +259,11 @@
    power-line
    mode-icons
    #+BEGIN_SRC emacs-lisp
+     (use-package tabbar
+       :ensure t
+       :config (tabbar-mode 1)
+       )
+
      (use-package powerline
        :ensure t
        :config
@@ -285,7 +282,6 @@
        (setq tabbar-ruler-popup-menu t)       ; get popup menu.
        (setq tabbar-ruler-popup-toolbar nil)    ; get popup toolbar
        (setq tabbar-ruler-popup-scrollbar t))  ; show scroll-bar on mouse-move
-
    #+END_SRC
 * windows
 ** builtin
