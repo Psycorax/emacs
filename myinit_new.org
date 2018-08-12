@@ -14,15 +14,18 @@
 
      ;; change to shorter answers
      (fset 'yes-or-no-p 'y-or-n-p)
+
+     ;; choose backup directory to get rid of ~ files everywhere
+     (setq backup-directory-alist '(("." . "~/.emacs.d/backup")))
    #+END_SRC
 *** line numbers in buffer
     Don't use the alternative for Emacs <26, beacause it slows emacs
     down. Use line at bottom for information about cursor and buffer
     postions.
     #+BEGIN_SRC emacs-lisp
-     ;; For Emacs > 26
-     (if (>= emacs-major-version 26)
-       	 (progn (global-display-line-numbers-mode t)))
+      ;; For Emacs > 26
+      (if (>= emacs-major-version 26)
+	  (progn (global-display-line-numbers-mode t)))
     #+END_SRC
 ** themes
    There are several builtin themes that come with emacs out of the
@@ -49,15 +52,15 @@
     (global-set-key (kbd "C-x o") 'ace-window)
     (global-set-key (kbd "<f5>") 'revert-buffer)
     (global-set-key (kbd "\e\ei")
-                    (lambda () (interactive) (find-file "~/Documents/git/emacs/myinit_new.org")))
+		    (lambda () (interactive) (find-file "~/Documents/git/emacs/myinit_new.org")))
     (global-set-key (kbd "\e\ec")
-                        (lambda () (interactive) (find-file "~/Tests/Programms/CMakeLists.txt")))
+			(lambda () (interactive) (find-file "~/Tests/Programms/CMakeLists.txt")))
     (global-set-key (kbd "\e\ey")
-                        (lambda () (interactive) (find-file "~/Tests/Programms/__main__.py")))
+			(lambda () (interactive) (find-file "~/Tests/Programms/__main__.py")))
     (global-set-key (kbd "\e\eb")
-                    (lambda () (interactive) (find-file "~/Documents/git/bac/main.tex")))
+		    (lambda () (interactive) (find-file "~/Documents/git/bac/main.tex")))
     (global-set-key (kbd "\e\ep")
-                    (lambda () (interactive) (find-file "~/Documents/git/pb/PrBericht__HSD_v1.tex")))
+		    (lambda () (interactive) (find-file "~/Documents/git/pb/PrBericht__HSD_v1.tex")))
   #+END_SRC
 * buffers
 ** builtin
@@ -80,7 +83,7 @@
        :ensure t
        :after avy
        :init
-       (global-set-key [remap other-window] 'ace-window)       
+       (global-set-key [remap other-window] 'ace-window)
        (custom-set-faces
 	'(aw-leading-char-face
 	  ((t (:inherit ace-jump-face-foreground :height 4.0)))))
@@ -116,12 +119,12 @@
     mini buffer.
     #+BEGIN_SRC emacs-lisp
       (use-package ivy
-        :ensure t
-        :bind ("C-x b" . ivy-switch-buffer)
-        :init (ivy-mode 1)
-        :config
-        (setq ivy-use-virtual-buffers t)
-        (setq ivy-display-style 'fancy))
+	:ensure t
+	:bind ("C-x b" . ivy-switch-buffer)
+	:init (ivy-mode 1)
+	:config
+	(setq ivy-use-virtual-buffers t)
+	(setq ivy-display-style 'fancy))
     #+END_SRC
 *** swiper
     [[https://github.com/abo-abo/swiper][Swiper]] is a alternative to the built in isearch. Eith [[https://github.com/abo-abo/swiper][swiper]],
@@ -130,27 +133,27 @@
     installed.
     #+BEGIN_SRC emacs-lisp
       (use-package swiper
-        :ensure t
-        :after ivy
-        :bind ("C-s" . swiper)
-              ("C-r" . swiper))
+	:ensure t
+	:after ivy
+	:bind ("C-s" . swiper)
+	      ("C-r" . swiper))
     #+END_SRC
 
     #+RESULTS:
     : swiper
 
 *** counsel
-    
+
     #+BEGIN_SRC emacs-lisp
       (use-package counsel
-        :ensure t
-        :after ivy
-        :bind
-        ("M-x" . counsel-M-x)
-        ("C-x C-f" . counsel-find-file)
-        (("M-y" . counsel-yank-pop)
-         :map ivy-minibuffer-map
-         ("M-y" . ivy-next-line)))
+	:ensure t
+	:after ivy
+	:bind
+	("M-x" . counsel-M-x)
+	("C-x C-f" . counsel-find-file)
+	(("M-y" . counsel-yank-pop)
+	 :map ivy-minibuffer-map
+	 ("M-y" . ivy-next-line)))
     #+END_SRC
 
 * misc features
@@ -174,7 +177,7 @@
    #+BEGIN_SRC emacs-lisp
      (use-package expand-region
        :ensure t
-       :config 
+       :config
        (global-set-key (kbd "C-+") 'er/expand-region))
    #+END_SRC
 ** multiple cursors
@@ -188,21 +191,18 @@
        (define-key mc/keymap (kbd "<return>") nil))
    #+END_SRC
 ** Flyspell
+   function for flyspell to change language (german and english)
    #+BEGIN_SRC emacs-lisp
-          ;; add here your hooks for flyspell
-          (add-hook 'org-mode-hook 'flyspell-mode)
-          (add-hook 'latex-mode-hook 'flyspell-mode)
+     (defun fd-switch-dictionary()
+       (interactive)
+       (let* ((dic ispell-current-dictionary)
+	      (change (if (string= dic "deutsch8") "english" "deutsch8")))
+	 (ispell-change-dictionary change)
+	 (flyspell-buffer)
+	 (message "Dictionary switched from %s to %s" dic change)
+	 ))
 
-          (defun fd-switch-dictionary()
-            (interactive)
-            (let* ((dic ispell-current-dictionary)
-                   (change (if (string= dic "deutsch8") "english" "deutsch8")))
-              (ispell-change-dictionary change)
-              (message "Dictionary switched from %s to %s" dic change)
-              (flyspell-buffer)
-              ))
-
-          (global-set-key (kbd "<f9>")   'fd-switch-dictionary)
+     (global-set-key (kbd "<f9>")   'fd-switch-dictionary)
    #+END_SRC
 ** undo tree
    [[https://www.emacswiki.org/emacs/UndoTree][Undo-tree]] visualizes the undo mechanic and enables the choice to
@@ -233,10 +233,10 @@
    like html as well.
    #+BEGIN_SRC emacs-lisp
      ;; (use-package smartparens
-     ;;   :ensure t
-     ;;   :hook
-     ;;   (smartparens-mode . org-mode)
-     ;;   (smartparens-mode . emacs-lisp-mode))
+     ;;	  :ensure t
+     ;;	  :hook
+     ;;	  (smartparens-mode . org-mode)
+     ;;	  (smartparens-mode . emacs-lisp-mode))
 
      (use-package smartparens
        :ensure t
@@ -247,11 +247,125 @@
        (c++-mode . smartparens-mode)
        (python-mode . smartparens-mode))
    #+END_SRC
-** hydra
+** hydra package
    #+BEGIN_SRC emacs-lisp
      (use-package hydra
        :ensure t)
    #+END_SRC
+** projectile
+   #+BEGIN_SRC emacs-lisp
+     ;; projectile
+     (use-package projectile
+       :ensure t
+       :config
+       (projectile-global-mode)
+       (setq projectile-completion-system 'ivy))
+
+     ;; (use-package counsel-projectile
+     ;;   :ensure t
+     ;;   :config
+     ;;   (counsel-projectile-on))
+   #+END_SRC
+* GUI
+** set GUI elements here
+   #+BEGIN_SRC emacs-lisp
+     (setq use-zenburn nil)
+     (setq use-hemisu-dark nil)
+     (setq use-tabbar-ruler nil)
+     (setq use-org-bullets nil)
+   #+END_SRC
+** extern themes
+   themes made by the community
+   [[https://pawelbx.github.io/emacs-theme-gallery/][theme galery 1]]
+   [[https://emacsthemes.com/][theme galery 2]]
+*** zenburn
+    [[https://github.com/bbatsov/zenburn-emacs][zenburn-theme]]
+    #+BEGIN_SRC emacs-lisp
+      (if use-zenburn
+	  (use-package zenburn-theme
+	    :ensure t
+	    :config (load-theme 'zenburn t)))
+    #+END_SRC
+*** hemisu
+    [[https://github.com/andrzejsliwa/hemisu-theme][hemisu-theme]]
+    #+BEGIN_SRC emacs-lisp
+      (if use-hemisu-dark
+	  (use-package hemisu-theme
+	    :ensure t
+	    :config (load-theme 'hemisu-dark t)))
+    #+END_SRC
+** tabbar ruler
+   #+BEGIN_SRC emacs-lisp
+   
+   #+END_SRC
+** orgbullets
+   #+BEGIN_SRC emacs-lisp
+   
+   #+END_SRC
+** treemacs
+   #+BEGIN_SRC emacs-lisp
+     (use-package treemacs
+       :ensure t
+       :defer t
+       :init
+       (with-eval-after-load 'winum
+	 (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+       :config
+       (progn
+	 (setq treemacs-collapse-dirs              (if (executable-find "python") 3 0)
+	       treemacs-deferred-git-apply-delay   0.5
+	       treemacs-display-in-side-window     t
+	       treemacs-file-event-delay           5000
+	       treemacs-file-follow-delay          0.2
+	       treemacs-follow-after-init          t
+	       treemacs-follow-recenter-distance   0.1
+	       treemacs-goto-tag-strategy          'refetch-index
+	       treemacs-indentation                2
+	       treemacs-indentation-string         " "
+	       treemacs-is-never-other-window      nil
+	       treemacs-no-png-images              nil
+	       treemacs-project-follow-cleanup     nil
+	       treemacs-persist-file               (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+	       treemacs-recenter-after-file-follow nil
+	       treemacs-recenter-after-tag-follow  nil
+	       treemacs-show-hidden-files          t
+	       treemacs-silent-filewatch           nil
+	       treemacs-silent-refresh             nil
+	       treemacs-sorting                    'alphabetic-desc
+	       treemacs-space-between-root-nodes   t
+	       treemacs-tag-follow-cleanup         t
+	       treemacs-tag-follow-delay           1.5
+	       treemacs-width                      35)
+
+	 ;; The default width and height of the icons is 22 pixels. If you are
+	 ;; using a Hi-DPI display, uncomment this to double the icon size.
+	 ;;(treemacs-resize-icons 44)
+
+	 (treemacs-follow-mode t)
+	 (treemacs-filewatch-mode t)
+	 (treemacs-fringe-indicator-mode t)
+	 (pcase (cons (not (null (executable-find "git")))
+		      (not (null (executable-find "python3"))))
+	   (`(t . t)
+	    (treemacs-git-mode 'extended))
+	   (`(t . _)
+	    (treemacs-git-mode 'simple))))
+       :bind
+       (:map global-map
+	     ("M-0"       . treemacs-select-window)
+	     ("C-x t 1"   . treemacs-delete-other-windows)
+	     ("C-x t t"   . treemacs)
+	     ("C-x t B"   . treemacs-bookmark)
+	     ("C-x t C-t" . treemacs-find-file)
+	     ("C-x t M-t" . treemacs-find-tag)))
+
+     (use-package treemacs-projectile
+       :after treemacs projectile
+       :ensure t)
+   #+END_SRC
+
+   #+RESULTS:
+
 * autocomplete
 ** auto-complete-package
    [[https://github.com/auto-complete/auto-complete][Auto-complete]]
@@ -272,7 +386,7 @@
        (org-ac/config-default))
     #+END_SRC
 ** Company
-   [[https://github.com/company-mode/company-mode][Company]] 
+   [[https://github.com/company-mode/company-mode][Company]]
    #+BEGIN_SRC emacs-lisp
      (use-package company
        :ensure t
@@ -283,10 +397,10 @@
 * org-mode
 ** org-elpa
    Gets installed with org-plus-contrib in init.el file. This is,
-   because org must be installed before org is used in any way.  The
+   because org must be installed before org is used in any way.	 The
    Following code must be in the init.el file, directly after
    installing use-package!!!
-   
+
    (use-package org
    :ensure org-plus-contrib
    :pin org)
@@ -294,6 +408,28 @@
    Hide leading stars for a better view
    #+BEGIN_SRC emacs-lisp
      (setq org-hide-leading-stars t)
+   #+END_SRC
+** hydra hooks
+   #+BEGIN_SRC emacs-lisp
+     (defhydra hydra-org (:color blue :hint nil)
+       "
+     _b_: beautify src block   _p_: nil	   _t_: nil
+     _u_: nil		       _e_: nil	   _Q_: nil
+     ^ ^		       _s_: nil	   _C_: nil
+     "
+       ("b" (progn (org-edit-special)(beautify-me "t")(org-edit-src-exit)))
+       ("u" (nil))
+       ("p" (nil))
+       ("e" (nil))
+       ("s" (nil))
+       ("t" (nil))
+       ("Q" (nil))
+       ("C" (nil)))
+
+     ;; bind hydra to vhdl mode
+     (add-hook 'org-mode-hook
+	       (lambda () (local-set-key (kbd "<f8>") 'hydra-org/body)))
+     (add-hook 'org-mode-hook 'flyspell-mode)
    #+END_SRC
 * GIT
 ** magit
@@ -331,11 +467,15 @@
        (setq dir (substring (nth count (split-string curDir "/"))))
        (equal dir x))
    #+END_SRC
-  
+
    Code for adding yasnippet support for all company backends is from
    [[https://emacs.stackexchange.com/questions/10431/get-company-to-show-suggestions-for-yasnippet-names][Source]].
 ** packages
-   #+BEGIN_SRC emacs-lisp    
+   #+BEGIN_SRC emacs-lisp
+     (use-package dumb-jump
+       :ensure t
+       :bind (("M-g j" . dumb-jump-go)))
+
      (use-package yasnippet
        :ensure t
        :config
@@ -359,7 +499,6 @@
        :ensure t
        :init
        (global-flycheck-mode t))
-
    #+END_SRC
 ** beautifier
    #+BEGIN_SRC emacs-lisp
@@ -374,11 +513,24 @@
        (if noTabs
 	   (untabify (point-min) (point-max))
 	 (tabify (point-min) (point-max))))
+
+     ;; beautifier for emacs-lisp need to be called with t interactive
+     (defun beautify-el ()
+       (interactive)
+       (beautify-me "t"))
    #+END_SRC
+* elisp
+  #+BEGIN_SRC emacs-lisp
+    ;; hooks
+    (add-hook 'emacs-lisp-mode-hook 'company-mode)
+    (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
+    (add-hook 'emacs-lisp-mode-hook
+	      (lambda () (local-set-key (kbd "C-c C-b") 'beautify-el)))
+  #+END_SRC
 * C++
   If C/C++ packages are executed with typing nil.
 
-  For C/C++ we use [[http://www.flycheck.org/en/latest/][flycheck]] for a live syntax checker.  For better
+  For C/C++ we use [[http://www.flycheck.org/en/latest/][flycheck]] for a live syntax checker.	For better
   completion for python we use [[https://github.com/davidhalter/jedi][Jedi]].  [[https://github.com/jorgenschaefer/elpy][Elpy]] combines a syntax checker,
   a project manager, a completion. Choose wich one you like. [[https://github.com/joaotavora/yasnippet][Yasnippet]]
   is a package for making templates, that can be saved in the snippets
@@ -390,9 +542,9 @@
      ;; hydra for the project management
      (defhydra hydra-C-Cpp (:color blue :hint nil)
        "
-	  _b_: Beautify tabify    _t_: build Tags     _S_: Start debugging
+	  _b_: Beautify tabify	  _t_: build Tags     _S_: Start debugging
 	  _u_: beautify Untabify  _d_: build Debug    _C_: Clean project
-	  ^ ^                     _r_: build Release
+	  ^ ^			  _r_: build Release
 	  "
        ("b" (beautify-me))
        ("u" (beautify-me "t"))
@@ -465,14 +617,14 @@
 	       (progn (mkdir "../debug")))
 	     (cd (concat (file-name-directory buffer-file-name) "../debug"))
 	     (shell-command "cmake -DCMAKE_BUILD_TYPE=Debug ..")
-	     (compile "make -C .")	     
+	     (compile "make -C .")
 	     )
 	 (progn
 	   (unless (file-directory-p "../release")
 	     (progn (mkdir "../release")))
 	   (cd (concat (file-name-directory buffer-file-name) "../release"))
 	   (shell-command "cmake -DCMAKE_BUILD_TYPE=Release ..")
-	   (compile "make -C .")      
+	   (compile "make -C .")
 	   ))
        (cd (concat (file-name-directory buffer-file-name) "../src")))
 
@@ -521,7 +673,7 @@
 
 	  (use-package company-irony
 	    :ensure t
-	    :config 
+	    :config
 	    (add-to-list 'company-backends 'company-irony))
 
 	  (use-package company-irony-c-headers
@@ -535,13 +687,13 @@
 
 
 ;;    (unless t
-;;      (progn
+;;	(progn
 
 	;; (use-package rtags
 	;;  :ensure t)
 
 	;; (use-package auto-complete-clang
-	;; 	:ensure t)
+	;;	:ensure t)
 
 	;;(use-package ac-clang
 	;;   :ensure t)
@@ -552,7 +704,7 @@
 	;; (setq rtags-path "~/Documents/git/rtags/bin")
 
 	;; (use-package cmake-ide
-	;; 	:ensure t)
+	;;	:ensure t)
 
 	;; (setq cmake-ide-rdm-executable "~/Documents/git/rtags/bin/rdm")
 	;; (setq cmake-ide-rc-executable "~/Documents/git/rtags/bin/rc")
@@ -564,7 +716,7 @@
 * python
   If python packages are needed use t for true otherwise nil.
 
-  For python we use [[http://www.flycheck.org/en/latest/][flycheck]] for a live syntax checker.  For better
+  For python we use [[http://www.flycheck.org/en/latest/][flycheck]] for a live syntax checker.	 For better
   completion for python we use [[https://github.com/davidhalter/jedi][Jedi]].  [[https://github.com/jorgenschaefer/elpy][Elpy]] combines a syntax checker,
   a project manager, a completion. Choose wich one you like. [[https://github.com/joaotavora/yasnippet][Yasnippet]]
   is a package for making templates, that can be saved in the snippets
@@ -574,9 +726,9 @@
      ;; hydra for the project management
      (defhydra hydra-py (:color blue :hint nil)
        "
-     _b_: Beautify tabify     _p_: run Python         _E_: make Executable
-     _u_: beautify Untabify   _e_: Evaluate buffer    _Q_: Quit python	  
-     _t_: build Tags          _s_: Switch to Shell    _C_: Clean project
+     _b_: Beautify tabify     _p_: run Python	      _E_: make Executable
+     _u_: beautify Untabify   _e_: Evaluate buffer    _Q_: Quit python
+     _t_: build Tags	      _s_: Switch to Shell    _C_: Clean project
      "
        ("b" (beautify-me))
        ("u" (beautify-me "t"))
@@ -661,105 +813,112 @@
       (progn
 	(use-package elpy
 	  :ensure t
-	  :config 
+	  :config
 	  (elpy-enable))))
    #+END_SRC
 * LaTeX
   packages for latex auf linux: sudo apt-get install
   texlive-latex-recommended texlive-latex-extra
   texlive-fonts-recommended texlive-base texlive-latex-base
-  #+BEGIN_SRC emacs-lisp
-    ;; hydra for the project management
-    (defhydra hydra-tex (:color blue :hint nil)
-      "
-		 _b_: Build PDF           _p_: nil    _t_: nil
-		 _u_: nil                 _e_: nil    _Q_: nil
-		 ^ ^                      _s_: nil    _C_: Clear directory
-		 "
-      ("b" (build-latex))
-      ("u" (nil))
-      ("p" (nil))
-      ("e" (nil))
-      ("s" (nil))
-      ("t" (nil))
-      ("Q" (nil))
-      ("C" (clear-all-tex)))
+** hydra mkdir build clear
+   #+BEGIN_SRC emacs-lisp
+     ;; hydra for the project management
+     (defhydra hydra-tex (:color blue :hint nil)
+       "
+		  _b_: Build PDF	   _p_: nil    _t_: nil
+		  _u_: nil		   _e_: nil    _Q_: nil
+		  ^ ^			   _s_: nil    _C_: Clear directory
+		  "
+       ("b" (build-latex))
+       ("u" (nil))
+       ("p" (nil))
+       ("e" (nil))
+       ("s" (nil))
+       ("t" (nil))
+       ("Q" (nil))
+       ("C" (clear-all-tex)))
 
-    ;; bind hydra to vhdl mode
-    (add-hook 'latex-mode-hook
-	      (lambda () (local-set-key (kbd "<f8>") 'hydra-tex/body)))
+     ;; bind hydra to vhdl mode
+     (add-hook 'latex-mode-hook
+	       (lambda () (local-set-key (kbd "<f8>") 'hydra-tex/body)))
 
-    (defun build-latex ()
-      (interactive)
-      (message "building pdf")
-      (if (this-file-in-dir "chapters")
-	  (cd (concat (file-name-directory buffer-file-name) "../")))
-      ;; check if in a valid latex dir
-      (if (equal (length (file-expand-wildcards "*.tex")) 1)
-	  (progn
-	    ;; check if directories exist otherwise create them
-	    (unless (file-directory-p "./build")
-	      (progn (mkdir "./build")))
-	    (if (file-directory-p "./front")
-		(progn (unless (file-directory-p "./build/front")
-			 (progn (mkdir "./build/front")))))
-	    (if (file-directory-p "./back")
-		(progn (unless (file-directory-p "./build/back")
-			 (progn (mkdir "./build/back")))))
-	    (if (file-directory-p "./chapters")
-		(progn (unless (file-directory-p "./build/chapters")
-			 (progn (mkdir "./build/chapters")))))
-	    (unless (file-exists-p "./build/main.bcf")
-	      (progn (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))))
-	    (shell-command (concat "biber ./build/main"))
-	    (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))
-	    (message "build pdf executed")
-	    (end-of-buffer-other-window 0))
-	(progn 
-	  (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0))
-	  (if (equal myFileEnding "tex")
-	      (progn (unless (file-directory-p "./build")
-		       (progn (mkdir "./build")))
-		     (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build " buffer-file-name)))
-	    (message "no tex file found, try to execute command from your main tex file")))))
+     (defun build-latex ()
+       (interactive)
+       (message "building pdf")
+       (if (this-file-in-dir "chapters")
+	   (cd (concat (file-name-directory buffer-file-name) "../")))
+       ;; check if in a valid latex dir
+       (if (equal (length (file-expand-wildcards "*.tex")) 1)
+	   (progn
+	     ;; check if directories exist otherwise create them
+	     (unless (file-directory-p "./build")
+	       (progn (mkdir "./build")))
+	     (if (file-directory-p "./front")
+		 (progn (unless (file-directory-p "./build/front")
+			  (progn (mkdir "./build/front")))))
+	     (if (file-directory-p "./back")
+		 (progn (unless (file-directory-p "./build/back")
+			  (progn (mkdir "./build/back")))))
+	     (if (file-directory-p "./chapters")
+		 (progn (unless (file-directory-p "./build/chapters")
+			  (progn (mkdir "./build/chapters")))))
+	     (unless (file-exists-p "./build/main.bcf")
+	       (progn (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))))
+	     (shell-command (concat "biber ./build/main"))
+	     (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build *.tex"))
+	     (message "build pdf executed")
+	     (end-of-buffer-other-window 0))
+	 (progn
+	   (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0))
+	   (if (equal myFileEnding "tex")
+	       (progn (unless (file-directory-p "./build")
+			(progn (mkdir "./build")))
+		      (shell-command (concat "pdflatex -synctex=1 -halt-on-error -output-directory=build " buffer-file-name)))
+	     (message "no tex file found, try to execute command from your main tex file")))))
 
-    ;; creates a directory for vhdl projects
-    (defun mkdir-tex ()
-      (interactive)
-      (message "making default latex project directory")
-      (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
-      (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0))
-      (if (equal myFileEnding "tex")
-	  (progn
-	    (setq myDirName (read-from-minibuffer "Projec directory name: "))
-	    (shell-command (concat "mkdir -p " myDirName "/images"))
-	    (shell-command (concat "mv " myFileName "." myFileEnding " ./" myDirName "/" myFileName "." myFileEnding))
-	    (kill-buffer (concat myFileName "." myFileEnding))
-	    (cd (concat "~/Tests/Programms/"myDirName"/"))
-	    (find-file (concat myFileName"." myFileEnding)))))
+     ;; creates a directory for vhdl projects
+     (defun mkdir-tex ()
+       (interactive)
+       (message "making default latex project directory")
+       (setq myFileName (nth 0 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")))
+       (setq myFileEnding (substring (nth 1 (split-string (nth (-(length(split-string (buffer-file-name) "/")) 1)(split-string (buffer-file-name) "/")) "\\.")) 0))
+       (if (equal myFileEnding "tex")
+	   (progn
+	     (setq myDirName (read-from-minibuffer "Projec directory name: "))
+	     (shell-command (concat "mkdir -p " myDirName "/images"))
+	     (shell-command (concat "mv " myFileName "." myFileEnding " ./" myDirName "/" myFileName "." myFileEnding))
+	     (kill-buffer (concat myFileName "." myFileEnding))
+	     (cd (concat "~/Tests/Programms/"myDirName"/"))
+	     (find-file (concat myFileName"." myFileEnding)))))
 
-    ;; clear tex directory
-    (defun clear-all-tex ()
-      (message "clear all")
-      (if (not (file-directory-p "./images"))
-	  (progn
-	    (cd (concat (file-name-directory buffer-file-name) "../"))
-	    (message "one out")))
-      (if (file-directory-p "./images")
-	  (progn
-	    (if (file-directory-p "./build")
-		(shell-command "rm -r ./build")
-	      (message "nothing to clear")))
-	(message "in wrong directory")))
-  #+END_SRC
+     ;; clear tex directory
+     (defun clear-all-tex ()
+       (message "clear all")
+       (if (not (file-directory-p "./images"))
+	   (progn
+	     (cd (concat (file-name-directory buffer-file-name) "../"))
+	     (message "one out")))
+       (if (file-directory-p "./images")
+	   (progn
+	     (if (file-directory-p "./build")
+		 (shell-command "rm -r ./build")
+	       (message "nothing to clear")))
+	 (message "in wrong directory")))
+   #+END_SRC
+** packages
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'latex-mode-hook 'flyspell-mode)
+     (add-hook 'latex-mode-hook 'company-mode)
+     (add-hook 'latex-mode-hook 'yas-minor-mode)
+   #+END_SRC
 * vhdl
 ** hydra
    #+BEGIN_SRC emacs-lisp
      ;; hydra for the project management
      (defhydra hydra-vhdl (:color blue :hint nil)
        "
-			   _b_: Beautify            _s_: set Tcl file         _t_: build tags table
-			   _c_: Compile(ghdl)       _S_: Simulate modelsim    _C_: Clear directory
+			   _b_: Beautify	    _s_: set Tcl file	      _t_: build tags table
+			   _c_: Compile(ghdl)	    _S_: Simulate modelsim    _C_: Clear directory
 			   "
        ("b" (vhdl-beautify-buffer))
        ("c" (compile-vhdl-ghdl))
@@ -782,7 +941,7 @@
 	     (cd (concat (file-name-directory buffer-file-name) "../sim"))))
        (setq tcl-file (read-from-minibuffer "(optional) tcl-file: "))
        (if (equal (nth 1 (split-string tcl-file "\\.")) "tcl")
-	   (progn 
+	   (progn
 	     (message "valid input")
 	     (setq my-sim-tcl-file tcl-file)))
        (if (equal (length (file-expand-wildcards "*.tcl")) 1)
@@ -869,21 +1028,21 @@
   these issues.
   #+BEGIN_SRC emacs-lisp
     (unless t
-        (progn
-          (use-package web-mode
-            :ensure t
-            :config
-            (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-            (setq web-mode-engines-alist
-                  '(("django"    . "\\.html\\'")))
-            (setq web-mode-ac-sources-alist
-                  '(("css" . (ac-source-css-property))
-                    ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+	(progn
+	  (use-package web-mode
+	    :ensure t
+	    :config
+	    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+	    (setq web-mode-engines-alist
+		  '(("django"	 . "\\.html\\'")))
+	    (setq web-mode-ac-sources-alist
+		  '(("css" . (ac-source-css-property))
+		    ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
 
-            (setq web-mode-enable-auto-closing t)
-            (setq web-mode-enable-auto-quoting t))))
+	    (setq web-mode-enable-auto-closing t)
+	    (setq web-mode-enable-auto-quoting t))))
   #+END_SRC
-* which operation system type 
+* which operation system type
   [[http://ergoemacs.org/emacs/elisp_determine_OS_version.html][Quelle]]
   #+BEGIN_SRC emacs-lisp
     ;; check OS type
