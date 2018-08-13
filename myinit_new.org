@@ -34,7 +34,7 @@
    themes.  To get them into you standard configuration just type the
    following line into your configuration file.
    #+BEGIN_SRC emacs-lisp
-     (load-theme 'tango-dark t)
+     ;; (load-theme 'tango-dark t)
    #+END_SRC
 
    highlights the line with the cursor. Needs to change cursor or face
