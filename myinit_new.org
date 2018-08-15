@@ -214,6 +214,7 @@
        (global-set-key (kbd "C-+") 'er/expand-region))
    #+END_SRC
 ** multiple cursors
+   [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]]
    #+BEGIN_SRC emacs-lisp
      (use-package multiple-cursors
        :ensure t
@@ -224,7 +225,7 @@
        (define-key mc/keymap (kbd "<return>") nil))
    #+END_SRC
 ** Flyspell
-   function for flyspell to change language (german and english)
+   function for [[https://www.emacswiki.org/emacs/FlySpell][flyspell]] to change language (german and english)
    #+BEGIN_SRC emacs-lisp
      (defun fd-switch-dictionary()
        (interactive)
@@ -270,11 +271,13 @@
        (python-mode . smartparens-mode))
    #+END_SRC
 ** hydra package
+   [[https://github.com/abo-abo/hydra][hydra]]
    #+BEGIN_SRC emacs-lisp
      (use-package hydra
        :ensure t)
    #+END_SRC
 ** projectile
+   [[https://github.com/bbatsov/projectile][projectile]]
    #+BEGIN_SRC emacs-lisp
      ;; projectile
      (use-package projectile
@@ -290,7 +293,7 @@
    #+END_SRC
 * GIT
 ** magit
-   [[https://magit.vc/][Magit]] is a...
+   [[https://magit.vc/][Magit]]
    #+BEGIN_SRC emacs-lisp
      (unless nil
        (progn
@@ -309,6 +312,7 @@
   Here are some packages and configurations that aren't language
   specific.
 ** basic functions
+   Own defined functions
    #+BEGIN_SRC emacs-lisp
      ;; func to check filedirectory
      (defun this-file-in-dir (x)
@@ -328,6 +332,12 @@
    Code for adding yasnippet support for all company backends is from
    [[https://emacs.stackexchange.com/questions/10431/get-company-to-show-suggestions-for-yasnippet-names][Source]].
 ** packages
+   [[https://github.com/Wilfred/ag.el][ag]]
+   [[https://github.com/jacktasia/dumb-jump][dumb-jump]]
+   [[https://github.com/joaotavora/yasnippet][yasnippet]]
+   [[https://github.com/AndreaCrotti/yasnippet-snippets][yasnippet-snippets]]
+   Source of company back-end function: [[https://emacs.stackexchange.com/questions/10431/get-company-to-show-suggestions-for-yasnippet-names][this func here]] [[https://github.com/company-mode/company-mode/blob/master/company-yasnippet.el][for this]]
+   [[http://www.flycheck.org/en/latest/][flycheck]]
    #+BEGIN_SRC emacs-lisp
      (use-package ag
        :ensure t
@@ -359,13 +369,14 @@
 		 '(:with company-yasnippet))))
 
      (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
-
+     
      (use-package flycheck
        :ensure t
        :init
        (global-flycheck-mode t))
    #+END_SRC
 ** beautifier
+   own beautifier
    #+BEGIN_SRC emacs-lisp
      ;; beautifier
      ;; if needed without tabs just change tabify
@@ -550,6 +561,9 @@
      (add-hook 'c++-mode-hook 'set-my-style-c-cpp)
    #+END_SRC
 ** packages
+   [[https://github.com/Sarcasm/irony-mode][irony]]
+   [[https://github.com/Sarcasm/company-irony][company-irony]]
+   [[https://github.com/hotpxl/company-irony-c-headers][company-irony-c-headers]]
    #+BEGIN_SRC emacs-lisp
     ;; with or without irony
     (setq use_irony nil)
@@ -587,13 +601,8 @@
 	  ))
    #+END_SRC
 * python
-  If python packages are needed use t for true otherwise nil.
-
-  For python we use [[http://www.flycheck.org/en/latest/][flycheck]] for a live syntax checker.	 For better
-  completion for python we use [[https://github.com/davidhalter/jedi][Jedi]].  [[https://github.com/jorgenschaefer/elpy][Elpy]] combines a syntax checker,
-  a project manager, a completion. Choose wich one you like. [[https://github.com/joaotavora/yasnippet][Yasnippet]]
-  is a package for making templates, that can be saved in the snippets
-  folder.
+  [[https://github.com/jorgenschaefer/elpy][Elpy-github]]
+  [[https://elpy.readthedocs.io/en/latest/index.html][Elpy-website]]
 ** hydra mkdir tags clear
    #+BEGIN_SRC emacs-lisp
      ;; hydra for the project management
@@ -947,6 +956,10 @@
 	    :config (load-theme 'hemisu-dark t)))
     #+END_SRC
 ** tabbar ruler
+   [[https://github.com/dholm/tabbar][tabbar]]
+   [[https://github.com/milkypostman/powerline][powerline]]
+   [[https://github.com/ryuslash/mode-icons][mode-icons]]
+   [[https://github.com/mattfidler/tabbar-ruler.el][tabbar-ruler]]
    #+BEGIN_SRC emacs-lisp
      (if use-tabbar-ruler
 	 (progn
@@ -976,6 +989,7 @@
 	   ))
    #+END_SRC
 ** orgbullets
+   [[https://github.com/sabof/org-bullets/blob/master/org-bullets.el][orgbullets]]
    #+BEGIN_SRC emacs-lisp
      (if use-org-bullets
 	 (progn
@@ -993,6 +1007,7 @@
     small: ► • ★ ▸
     for ellipsis: ▼ ⤵ ↴ ⬎ ⤷ … ⋱
 ** treemacs
+   [[https://github.com/Alexander-Miller/treemacs][treemacs]]
    #+BEGIN_SRC emacs-lisp
      (if use-treemacs
 	 (progn (use-package treemacs
