@@ -20,9 +20,11 @@
     down. Use line at bottom for information about cursor and buffer
     postions.
    #+BEGIN_SRC emacs-lisp
-     ;; For Emacs > 26
+     ;; For Emacs >= 26
      (if (>= emacs-major-version 26)
-       	 (progn (global-display-line-numbers-mode t)))
+	 (global-display-line-numbers-mode t)
+       (global-linum-mode)
+       )
    #+END_SRC
 ** themes
    There are several builtin themes that come with emacs out of the
