@@ -1,5 +1,5 @@
 #+STARTUP: overview
-#+TITLE: myinit_superbasic
+#+TITLE: myinit_basic
 #+AUTHOR: Thomas Reisinger
 #+DATE: <2018-08-09 Do>
 
@@ -50,7 +50,7 @@
   #+BEGIN_SRC emacs-lisp
     (global-set-key (kbd "<f5>") 'revert-buffer)
     (global-set-key (kbd "\e\ei")
-		    (lambda () (interactive) (find-file "~/Documents/git/emacs/myinit_superbasic.org")))
+		    (lambda () (interactive) (find-file "~/Documents/git/emacs/myinit_basic.org")))
   #+END_SRC
 * buffers
 ** builtin
