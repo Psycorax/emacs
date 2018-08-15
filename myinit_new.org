@@ -255,20 +255,8 @@
    marked area. It also can make the closing pair for some languages
    like html as well.
    #+BEGIN_SRC emacs-lisp
-     ;; (use-package smartparens
-     ;;	  :ensure t
-     ;;	  :hook
-     ;;	  (smartparens-mode . org-mode)
-     ;;	  (smartparens-mode . emacs-lisp-mode))
-
      (use-package smartparens
-       :ensure t
-       :hook
-       (org-mode . smartparens-mode)
-       (emacs-lisp-mode . smartparens-mode)
-       (c-mode . smartparens-mode)
-       (c++-mode . smartparens-mode)
-       (python-mode . smartparens-mode))
+       :ensure t)
    #+END_SRC
 ** hydra package
    [[https://github.com/abo-abo/hydra][hydra]]
@@ -431,24 +419,19 @@
      (add-hook 'org-mode-hook
 	       (lambda () (local-set-key (kbd "<f8>") 'hydra-org/body)))
      (add-hook 'org-mode-hook 'flyspell-mode)
+     (add-hook 'org-mode-hook 'smartparens-mode)
    #+END_SRC
 * elisp
   #+BEGIN_SRC emacs-lisp
     ;; hooks
+    (add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
     (add-hook 'emacs-lisp-mode-hook 'company-mode)
     (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
     (add-hook 'emacs-lisp-mode-hook
 	      (lambda () (local-set-key (kbd "C-c C-b") 'beautify-el)))
   #+END_SRC
 * C++
-  If C/C++ packages are executed with typing nil.
-
-  For C/C++ we use [[http://www.flycheck.org/en/latest/][flycheck]] for a live syntax checker.	For better
-  completion for python we use [[https://github.com/davidhalter/jedi][Jedi]].  [[https://github.com/jorgenschaefer/elpy][Elpy]] combines a syntax checker,
-  a project manager, a completion. Choose wich one you like. [[https://github.com/joaotavora/yasnippet][Yasnippet]]
-  is a package for making templates, that can be saved in the snippets
-  folder.
-  set indent:
+  change indentation (note: done in styl)):
   (setq c-basic-offset 2)
 ** mkdir build debug
    #+BEGIN_SRC emacs-lisp
@@ -577,6 +560,10 @@
     (add-hook 'c++-mode-hook 'yas-minor-mode)
     (add-hook 'cmake-mode-hook 'yas-minor-mode)
 
+    (add-hook 'c-mode-hook 'smartparens-mode)
+    (add-hook 'c++-mode-hook 'smartparens-mode)
+    (add-hook 'cmake-mode-hook 'smartparens-mode)
+
     (if use_irony
 	(progn
 	  ;; you need to run once: M-x irony-install-server
@@ -690,6 +677,7 @@
     ;; add hooks
     (add-hook 'python-mode-hook 'company-mode)
     (add-hook 'python-mode-hook 'yas-minor-mode)
+    (add-hook 'python-mode-hook 'smartparens-mode)
 
     (if use_elpy
       (progn
@@ -792,6 +780,7 @@
      (add-hook 'latex-mode-hook 'flyspell-mode)
      (add-hook 'latex-mode-hook 'company-mode)
      (add-hook 'latex-mode-hook 'yas-minor-mode)
+     (add-hook 'latex-mode-hook 'smartparens-mode)
    #+END_SRC
 * vhdl
 ** hydra
@@ -956,10 +945,6 @@
 	    :config (load-theme 'hemisu-dark t)))
     #+END_SRC
 ** tabbar ruler
-   [[https://github.com/dholm/tabbar][tabbar]]
-   [[https://github.com/milkypostman/powerline][powerline]]
-   [[https://github.com/ryuslash/mode-icons][mode-icons]]
-   [[https://github.com/mattfidler/tabbar-ruler.el][tabbar-ruler]]
    #+BEGIN_SRC emacs-lisp
      (if use-tabbar-ruler
 	 (progn
@@ -988,6 +973,10 @@
 	     (setq tabbar-ruler-popup-scrollbar t))  ; show scroll-bar on mouse-move
 	   ))
    #+END_SRC
+   [[https://github.com/dholm/tabbar][tabbar]]
+   [[https://github.com/milkypostman/powerline][powerline]]
+   [[https://github.com/ryuslash/mode-icons][mode-icons]]
+   [[https://github.com/mattfidler/tabbar-ruler.el][tabbar-ruler]]
 ** orgbullets
    [[https://github.com/sabof/org-bullets/blob/master/org-bullets.el][orgbullets]]
    #+BEGIN_SRC emacs-lisp
