@@ -44,7 +44,7 @@
    #+BEGIN_SRC emacs-lisp
     (global-hl-line-mode t)
     ;; (set-face-background hl-line-face "DodgerBlue2")
-    (set-cursor-color "DarkRed")
+    ;; (set-cursor-color "DarkRed")
     ;; (list-colors-display) ;; show all colors with names
    #+END_SRC
 * keybindings
@@ -311,16 +311,13 @@
        (setq dir (substring (nth count (split-string curDir "/"))))
        (equal dir x))
 
-     ;; func to check directory, just use if set!!!
+     ;; func to check directory, of variable default-directory
      (defun default-in-dir (x)
        (setq curDir default-directory)
        (setq count (- (length(split-string curDir "/")) 2))
        (setq dir (substring (nth count (split-string curDir "/"))))
        (equal dir x))
    #+END_SRC
-
-   Code for adding yasnippet support for all company backends is from
-   [[https://emacs.stackexchange.com/questions/10431/get-company-to-show-suggestions-for-yasnippet-names][Source]].
 ** packages
    [[https://github.com/Wilfred/ag.el][ag]]
    [[https://github.com/jacktasia/dumb-jump][dumb-jump]]
@@ -381,6 +378,7 @@
 	 (tabify (point-min) (point-max))))
 
      ;; beautifier for emacs-lisp need to be called with t interactive
+     ;; tabify destroys the hydra layout
      (defun beautify-el ()
        (interactive)
        (beautify-me "t"))
@@ -432,7 +430,7 @@
     (add-hook 'emacs-lisp-mode-hook
 	      (lambda () (local-set-key (kbd "C-c C-b") 'beautify-el)))
   #+END_SRC
-* C++
+* C/C++
   change indentation (note: done in styl)):
   (setq c-basic-offset 2)
 ** mkdir build debug
@@ -888,33 +886,13 @@
 ** packages
    #+BEGIN_SRC emacs-lisp
      ;; add hooks
+     (add-hook 'vhdl-mode-hook 'smartparens-mode)
      (add-hook 'vhdl-mode-hook 'company-mode)
      (add-hook 'vhdl-mode-hook 'yas-minor-mode)
+     (add-hook 'tcl-mode-hook 'smartparens-mode)
      (add-hook 'tcl-mode-hook 'company-mode)
      (add-hook 'tcl-mode-hook 'yas-minor-mode)
    #+END_SRC
-* web-mode
-  If web development packages are needed use t for true otherwise nil.
-
-  [[http://web-mode.org/][Web-mode]] is a enhanced mode for web development, because html-mode
-  is not working with included css or java stuff. [[http://web-mode.org/][Web-mode]] is fixing
-  these issues.
-  #+BEGIN_SRC emacs-lisp
-    (unless t
-	(progn
-	  (use-package web-mode
-	    :ensure t
-	    :config
-	    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-	    (setq web-mode-engines-alist
-		  '(("django"	 . "\\.html\\'")))
-	    (setq web-mode-ac-sources-alist
-		  '(("css" . (ac-source-css-property))
-		    ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
-
-	    (setq web-mode-enable-auto-closing t)
-	    (setq web-mode-enable-auto-quoting t))))
-  #+END_SRC
 * GUI
 ** set GUI elements here
    #+BEGIN_SRC emacs-lisp
